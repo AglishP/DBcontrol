@@ -7,56 +7,63 @@ import java.util.Map;
 
 public class FunctionName {
 	
+	//конструктор
+		public FunctionName(){
+			
+		}
+	
+	//конструктор
+	public FunctionName(String inType){
+		setType(inType);
+	}
+	
 	String typeFunc;
 	String queryName;
 	
 	//допустимые наборы функций
 	ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "main","extend","status")); 
-	Map<String, String> mainFucnName;
+	Map<String, String> mainFuncName;
 	
-
+	//устанавливаем тип 
 	public void setType(String inType) {
-		// TODO Auto-generated method stub
+
 		if (typeName.indexOf(inType) != -1){
 			typeFunc = inType;
 			fillNameList();
 		}
 	}
 
+	//получаем имя функции по параметру, который передали
 	public String getName(String inParamName) {
-		// TODO Auto-generated method stub
+		
 		String result = "";
 		
-		if (typeFunc == "main"){
-				result = getMainFunc(inParamName);
+		if (typeFunc != null){
+				result = mainFuncName.get(inParamName);
 		}else{
 				result = "error type";
 		}
 		return result;
 	}
 	
-	private String getMainFunc(String inParam){
-		
-		String result = "";
-		
-		result = mainFucnName.get(inParam);
-						
-		return result;
-	}
 	
+	//заполняем коллекцию названиями функций
 	private void fillNameList(){
 		
-		if (typeFunc == "main"){
-			mainFucnName = new HashMap<String, String>();
-			mainFucnName.put("ta","sum_ta_void");
-			mainFucnName.put("cldh","sum_cldh_void");
-			mainFucnName.put("rh","sum_rh_void");
-			mainFucnName.put("tdew","sum_tdew_void");
-			mainFucnName.put("vis","sum_vis_void");
-			mainFucnName.put("wd","sum_wd_void");
-			mainFucnName.put("ws","sum_ws_void");
-		}else{
-			
+		mainFuncName = new HashMap<String, String>();
+		
+		if (typeFunc == typeName.get(0)){
+			mainFuncName.put("ta","sum_ta_void");
+			mainFuncName.put("cldh","sum_cldh_void");
+			mainFuncName.put("rh","sum_rh_void");
+			mainFuncName.put("tdew","sum_tdew_void");
+			mainFuncName.put("vis","sum_vis_void");
+			mainFuncName.put("wd","sum_wd_void");
+			mainFuncName.put("ws","sum_ws_void");
+		}else if (typeFunc == typeName.get(1)){
+			mainFuncName.put("extend","f_stat_sb");
+		}else if (typeFunc == typeName.get(2)){	
+			mainFuncName.put("status","f_stat_status");
 		}
 	
 	
