@@ -7,8 +7,11 @@ import java.util.Map;
 
 public class FunctionName {
 	
+	String typeFunc;
+	String queryName;
+	
 	//конструктор
-		public FunctionName(){
+	public FunctionName(){
 			
 		}
 	
@@ -16,12 +19,9 @@ public class FunctionName {
 	public FunctionName(String inType){
 		setType(inType);
 	}
-	
-	String typeFunc;
-	String queryName;
-	
+		
 	//допустимые наборы функций
-	ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "main","extend","status")); 
+	ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "main","extend","status","fogStart")); 
 	Map<String, String> mainFuncName;
 	
 	//устанавливаем тип 
@@ -45,8 +45,7 @@ public class FunctionName {
 		}
 		return result;
 	}
-	
-	
+		
 	//заполняем коллекцию названиями функций
 	private void fillNameList(){
 		
@@ -64,6 +63,8 @@ public class FunctionName {
 			mainFuncName.put("extend","f_stat_sb");
 		}else if (typeFunc == typeName.get(2)){	
 			mainFuncName.put("status","f_stat_status");
+		}else if (typeFunc == typeName.get(3)){	
+			mainFuncName.put("fogStart","f_stat_start_fog");
 		}
 	
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.Scanner;
 import dataSaver.DataSaverClass;
+import sqlQuery.SqlQuery;
 
 
 public class StarterClass {
@@ -30,8 +31,8 @@ public class StarterClass {
 			
 			String[] inputCommand = inputStream.nextLine().split(" ");
 			
-			String startDate;
-			String endDate;
+			String startDate = null;
+			String endDate = null;
 			DateBuilder db;
 			
 			switch(inputCommand[0]){
@@ -57,19 +58,6 @@ public class StarterClass {
 					break;
 				}
 				
-				switch(inputCommand[2]){
-				case "main":
-					break;
-				case "status":
-					break;
-				case "alldata":
-									
-				
-				default:
-					System.out.println("No such command: " + inputCommand[2]);
-					break;
-				}
-				
 				break;
 				
 			case "print":
@@ -80,6 +68,69 @@ public class StarterClass {
 				
 				DataSaverClass dsc = new DataSaverClass(file);
 				dsc.writeString(s);
+				
+				
+			case "calc":
+				
+				switch(inputCommand[1]){
+				case "this":								
+					db = new DateBuilder("this");
+					startDate = db.getStartDay();
+					System.out.println(startDate);
+					endDate = db.getEndDay();
+					System.out.println(endDate);
+					break;
+				case "prev":
+					db = new DateBuilder("prev");
+					startDate = db.getStartDay();
+					System.out.println(startDate);
+					endDate = db.getEndDay();
+					System.out.println(endDate);
+					break;
+				default:
+					System.out.println("No such command: " + inputCommand[1]);	
+					break;
+				}				
+			
+				String calcType = null;
+				SqlQuery sqlQuery = new SqlQuery(myConn, calcType,startDate, endDate);
+				
+				if (startDate != null || endDate != null){break;}
+				
+				switch(inputCommand[2]){
+				case "main":
+					
+					//сначала считаем базовые параметры статистики
+					calcType = "main";
+					sqlQuery.setCalcType(calcType);
+					sqlQuery.makeCalc();
+					
+					//меняем тип на расширенный
+					calcType = "extend";
+					sqlQuery.setCalcType(calcType);
+					sqlQuery.makeCalc();
+					
+					break;
+				case "status":
+					
+					calcType = "status";
+					sqlQuery.makeCalc();
+					break;
+					
+				case "alldata":
+					break;
+					
+				case "protocol":
+					//рассчет по протоколу иркутска
+					
+									
+					break;
+					
+				default:
+					System.out.println("No such command: " + inputCommand[2]);
+					break;
+				}
+				
 				
 			case "exit":
 				runProgramm = false;
