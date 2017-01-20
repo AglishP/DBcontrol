@@ -43,7 +43,13 @@ public class SqlQuery {
 		}
 	}
 		
+	public void makeCalc(String inType){
+	
+		this.setCalcType(inType);
+	}
+	
 	public void makeCalc(){
+		
 		if (calcType == allowedCalcType.get(0)){
 			this.mainCalc();
 		}else if (calcType == allowedCalcType.get(1)){
@@ -61,6 +67,7 @@ public class SqlQuery {
 			stmt = myconn.createStatement();
 			for (String meteoParam: typeName){
 				queryString = "SELECT "+fn.getName(meteoParam)+"('status','30791', 36,1000,"+startDate+","+endDate+", )";
+				System.out.println(queryString);
 				stmt.executeQuery(queryString);
 			}
 		} catch (SQLException e) {
@@ -83,7 +90,7 @@ public class SqlQuery {
 			stmt = myconn.createStatement();
 			for (String meteoParam: typeName){
 				queryString = "SELECT "+fn.getName(meteoParam)+"('30791', 24, "+startDate+","+endDate+", )";
-				
+				System.out.println(queryString);
 				stmt.executeQuery(queryString);
 			}
 		} catch (SQLException e) {
@@ -105,15 +112,17 @@ public class SqlQuery {
 			//TASK: переделать под циклы
 			stmt = myconn.createStatement();
 			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',3000, 24, "+startDate+","+endDate+", )";
+			System.out.println(queryString);
 			stmt.executeQuery(queryString);
 			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',1000, 24, "+startDate+","+endDate+", )";
+			System.out.println(queryString);
 			stmt.executeQuery(queryString);
 			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 24, "+startDate+","+endDate+", )";
+			System.out.println(queryString);
 			stmt.executeQuery(queryString);
 			queryString = "SELECT "+fn.getName(calcType)+"('30791','cldh',60, 24, "+startDate+","+endDate+", )";
+			System.out.println(queryString);
 			stmt.executeQuery(queryString);
-			
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -130,6 +139,7 @@ public class SqlQuery {
 		try {
 			//TASK: переделать под циклы
 			stmt = myconn.createStatement();
+			System.out.println(queryString);
 			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 36, "+startDate+","+endDate+", )";
 			stmt.executeQuery(queryString);
 			

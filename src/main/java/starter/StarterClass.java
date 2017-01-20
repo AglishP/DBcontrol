@@ -1,9 +1,12 @@
 package starter;
 
-import java.io.File;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
-import dataSaver.DataSaverClass;
+import dataSaver.DataSaver;
+import dataSaver.ReportMaker;
+import sqlQuery.FetchData;
 import sqlQuery.SqlQuery;
 
 
@@ -63,10 +66,9 @@ public class StarterClass {
 			case "print":
 				
 				String s = inputCommand[1];
-				String fileName = "D:\\java_writer.txt";
-				File file = new File(fileName);
+				String fileName = "java_writer.txt";
 				
-				DataSaverClass dsc = new DataSaverClass(file);
+				DataSaver dsc = new DataSaver(fileName);
 				dsc.writeString(s);
 				
 				
@@ -131,12 +133,22 @@ public class StarterClass {
 					break;
 				}
 				
+			case "test":
+				
+				ReportMaker rm = new ReportMaker();
+				DataSaver ds = new DataSaver();
+				
+				rm.writeCommonData(ds);
+				
+				//System.out.println(rm.nameFileCreator("DAY"));
+				
+		
 				
 			case "exit":
 				runProgramm = false;
 				System.out.println("exit programm");	
 				inputStream.close();
-				break;
+				
 			default:
 				System.out.println("No such command: " + inputCommand[0]);
 			}
