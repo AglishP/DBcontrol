@@ -11,7 +11,7 @@ public class DataSaver {
 	
 	File myFile = null;
 	FileWriter writer;
-	final String directoryPath = "D:\\IRAM\\ARX_FORECAST_ESTIM";
+	final String directoryPath = "D:\\IRAM\\ARX_FORECAST_ESTIM\\";
 	
 	/**
 	 * Пустой конструктор по умолчанию
@@ -24,27 +24,39 @@ public class DataSaver {
 	 * Конструктор с входным именем файла
 	 * @param inFile
 	 */
-	public DataSaver(String inFile){
+	public DataSaver(String inFileName){
 		
-		String fullPath = directoryPath.concat(inFile);
-		File myFile = new File(fullPath);
+		this.setFileName(inFileName);
+	}
+	
+	/**
+	 * Установка имени файла и создание fileWriter
+	 * @param inFileName имя файла
+	 */
+	public void setFileName(String inFileName){
 		
+		String fullPath = directoryPath.concat(inFileName);
+		myFile = new File(fullPath);
+		//System.out.println(fullPath);
 			if ( myFile.exists() ){
+				//System.out.println("File exist");
 				try {
-					writer = new FileWriter(inFile, false);
+					writer = new FileWriter(inFileName, false);
 				} catch (IOException e) {
 					System.out.println("Can't make FileWriter");
 					e.printStackTrace();
 				}
 			}else{
+				//System.out.println("try to make file");
 				try {
 					myFile.createNewFile();
+					writer = new FileWriter(myFile, false);
+					
 				} catch (IOException e) {
 					System.out.println("Can't create file");
 					e.printStackTrace();
 				}
 			}
-		
 	}
 	
 	/**
@@ -53,7 +65,23 @@ public class DataSaver {
 	 */
 	public void writeString (String s){
 		
+//		if(writer != null){
+//			System.out.println("Have a writer");
+//		}else{
+//			System.out.println("no writer");
+//			
+//		}
+//		if (myFile != null){
+//			System.out.println("myFile is not null");
+//		}else{
+//			System.out.println("myFile is null");
+//		}
+//		
+//		System.out.println(myFile.toString());
+		
+		
 		try {
+			System.out.println(s);
 			writer.write(s);
 			writer.append("\n");
 			writer.flush();

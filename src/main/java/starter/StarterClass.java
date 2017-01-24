@@ -135,10 +135,14 @@ public class StarterClass {
 				
 			case "test":
 				
-				ReportMaker rm = new ReportMaker();
-				DataSaver ds = new DataSaver();
+				db = new DateBuilder("prev");
+				startDate = db.getStartDay();
+				endDate = db.getEndDay();
 				
-				rm.writeCommonData(ds);
+				
+				ReportMaker rm = new ReportMaker(myConn,"test", startDate, endDate);
+				
+				rm.writeCommonData();
 				
 				//System.out.println(rm.nameFileCreator("DAY"));
 				

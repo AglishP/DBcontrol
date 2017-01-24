@@ -16,6 +16,7 @@ public class ReportMaker {
 	String startDate;
 	String endDate;
 	FetchData fd = null;
+	DataSaver ds = null;
 	
 //	final ArrayList<String> tshParam = new ArrayList<String>(Arrays.asList("Cldh1Lvl","Cldh1Tsh","Cldh2Lvl","Cldh2Tsh", ""
 //			+ "Rh","RhLvl","Ta","Tdew","Vis1Lvl","Vis1Tsh","Vis2Lvl","Vis2Tsh","Wd","Wd_LowLvl","Ws","Ws_LowLvl")); 
@@ -36,6 +37,7 @@ public class ReportMaker {
 		startDate = inStartDate;
 		endDate = inEndDate;
 		fd = new FetchData(myConn, startDate, endDate);
+		ds = this.createInitFile("DAY");
 	}
 	
 	/**
@@ -59,10 +61,10 @@ public class ReportMaker {
 	 * ѕолучаем данные дл€ заголовка в текстовом файле
 	 * @return list map с данными
 	 */
-	public Map<String, String> getHeadData(){
+	public LinkedHashMap<String, String> getHeadData(){
 				
 		//дополн€ем остальными данными дл€ заголовка
-		Map<String, String> m = new HashMap<String, String>();
+		LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
 		
 		m.put("StartDate", startDate);
 		//commonHeadData.add(m);
@@ -128,14 +130,13 @@ public class ReportMaker {
 		sb.append( commonData.get("CurrDate") );
 		sb.append(" ");
 		sb.append( commonData.get("CurrTime"));
-		sb.append(" 4ч-BD-");
+		sb.append(" 4ч-BD-JAVA_TEST");
 		sb.append(inPathOfDay);
 		sb.append(".txt");
 		
 		return sb.toString();
 	}
 
-	
 	public void writeHeadFile(){
 		//получаем им€ файла дл€ записи
 		
@@ -168,30 +169,59 @@ public class ReportMaker {
 		
 		String fileName = this.nameFileCreator(inPathOfDay);
 		
-		DataSaver dsc = new DataSaver(fileName);
+		DataSaver ds = new DataSaver(fileName);
 		
-		return dsc;	
+		return ds;	
 	}
 	
 	
-	public void writeCommonData(DataSaver inDsc){
+	@SuppressWarnings("rawtypes")
+	public void writeCommonData(){
 		
 		//получаем общие данные
-		Map<String, String> headData = this.getHeadData();
+		LinkedHashMap<String, String> headData = this.getHeadData();
+	
+		ArrayList<String> headDataArr = new ArrayList<String>();
+		
+		//пересобираем значени€ из map в list
+		for (Map.Entry entry: headData.entrySet()){
+			Object value = entry.getValue();
+			headDataArr.add((String) value);
+		}
 		
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getHeadTemplate();
 		
+		Integer idData = 0;
+		
+//		if (ds != null){
+//			System.out.println("ds not null");
+//			System.out.println(ds.toString());
+//		}else{
+//			System.out.println("ds is null");
+//		}
+		
 		//ќбъедин€ем данные с шаблоном
 		for (String oneString: headTemplate){
 			if ( oneString.contains("?") ){
-				System.out.println( headData );
-				headData.remove(1);
+				int indCh = oneString.indexOf("?");
+				
+				StringBuilder newString = new StringBuilder();
+				
+				newString.append(oneString.substring(0,indCh));
+				newString.append(headDataArr.get(idData));
+				newString.append(oneString.substring(indCh+1));
+				
+				//System.out.println(newString.toString());			
+				
+				ds.writeString(newString.toString());
+				
+				idData++;
 			}
 		}
 		
 		//построчна€ запись общих данных
-		
+		ds.closeAndFlush();
 	}
 
 }
