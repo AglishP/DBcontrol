@@ -145,6 +145,7 @@ public class StarterClass {
 				rm.writeCommonData();
 				rm.writeTshData();
 				rm.writeMainData();
+				rm.writeExtendData();
 				rm.close();
 				//System.out.println(rm.nameFileCreator("DAY"));
 				

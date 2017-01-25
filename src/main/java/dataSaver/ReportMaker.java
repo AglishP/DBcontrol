@@ -88,6 +88,14 @@ public class ReportMaker {
 	}
 	
 	/**
+	 * Получаем данные основной статистики
+	 */
+	public ArrayList<ArrayList<Map<String, Object>>> getExtendData(){
+		
+		return fd.getExtendStat();
+	}
+	
+	/**
 	 * Получить данные о статусе
 	 * @return упакованые данные
 	 */
@@ -252,6 +260,30 @@ public class ReportMaker {
 	}
 	
 	public void writeExtendData(){
+		//получаем общие данные
+		ArrayList<ArrayList<Map<String, Object>>> extendindData = this.getExtendData();
+		
+		//формируем строки общих данных
+		ArrayList<String> extendTemplate = new TemplateData().getExtendTemplate();
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getExtendHeadTemplate();
+		
+		//цикл по стацниям
+		for (ArrayList<Map<String, Object>> station: extendindData){
+
+			//получаем имя станции
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("station", station.get(1).get("station"));
+			//пишем заголовок с индексом станции
+			this.composeAndWrite(m, headTemplate);
+			
+			////цикл по параметрам
+			for (Map<String, Object> param: station){
+				//System.out.println(param);
+				this.composeAndWrite(param, extendTemplate);
+			}
+		}
 		
 	}
 	

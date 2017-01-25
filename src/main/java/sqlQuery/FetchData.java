@@ -115,12 +115,20 @@ public class FetchData {
 	 * Получить данные расширенной статистики
 	 * @return упакованые данные 
 	 */
-	public ArrayList<Map<String, Object>> getExtendStat(){
+	public ArrayList<ArrayList<Map<String, Object>>> getExtendStat(){
 		
-		String queryString = "SELECT * FROM lt_estim_res_stat "
-			+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' ";
+		ArrayList<ArrayList<Map<String, Object>>> responseData = new ArrayList<ArrayList<Map<String, Object>>>();
 		
-		return this.makeSimpleQ(queryString);
+		for(String station: stationList){
+		
+			String queryString = "SELECT * FROM lt_estim_res_stat "
+				+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"'AND station= '"+station+"'"
+						+ " AND period = 24 ";
+			
+			responseData.add(this.makeSimpleQ(queryString));
+		}
+		
+		return responseData;
 	}
 	
 	/**
