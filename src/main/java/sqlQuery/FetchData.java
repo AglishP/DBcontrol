@@ -6,6 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public class FetchData {
 	Statement stmt = null;
 	String startDate = null;
 	String endDate = null;
+	ArrayList<String> stationList = new ArrayList<String>(Arrays.asList("30791","30001","30002","30003"));
 	
 	/**
 	 * Конструктор
@@ -41,18 +43,17 @@ public class FetchData {
 	/**
 	 * Получить данные о пороговых значениях расчетов
 	 */
-	public ArrayList<Map<String, Integer>> getTsh(){
+	public Map<String, Object> getTsh(){
 		
 		String queryString = null;
 		
-		ArrayList<Map<String, Integer>> responseData = new ArrayList<Map<String, Integer>>();
+		Map<String, Object> responseData = new HashMap<String, Object>();
 		
 		try {
 			stmt = myConn.createStatement();
-			Map<String, Integer> m =  new HashMap<String, Integer>();
 			
 			queryString = "SELECT * FROM tsh ";
-			System.out.println(queryString);
+			
 			ResultSet rs = stmt.executeQuery(queryString);
 				
 			while (rs.next()){
@@ -62,8 +63,14 @@ public class FetchData {
 				currName = rs.getString(1);
 				currValue = rs.getInt(2);
 				
-				m.put(currName, currValue);
-				responseData.add(m);
+				//модифицируем поле имя
+				int ind = 0;
+				ind = currName.indexOf(" ");
+				if (ind > 0){
+					currName = currName.substring(0,ind);
+				}
+				
+				responseData.put(currName, currValue);
 			}
 			
 			rs.close();
@@ -88,12 +95,20 @@ public class FetchData {
 	/**
 	 * Получить данные основного расчета
 	 */
-	public ArrayList<Map<String, Object>> getMainStat(){
+	public ArrayList<ArrayList<Map<String, Object>>> getMainStat(){
 		
-		String queryString = "SELECT * FROM lt_estim_res "
-					+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' ";
+		ArrayList<ArrayList<Map<String, Object>>> responseData = new ArrayList<ArrayList<Map<String, Object>>>();
+		
+		for(String station: stationList){
+		
+			String queryString = "SELECT * FROM lt_estim_res "
+						+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' AND station= '"+station+"'"
+								+ "AND period = 24 ";
 			
-		return this.makeSimpleQ(queryString);
+			responseData.add(this.makeSimpleQ(queryString));	
+		}
+		
+		return responseData;
 	}
 
 	/**
@@ -142,7 +157,7 @@ public class FetchData {
 		
 		try {
 			stmt = myConn.createStatement();
-			Map<String, Object> m =  new HashMap<String, Object>();
+			Map<String, Object> m;
 			
 			ResultSet rs = stmt.executeQuery(q);
 				
@@ -154,6 +169,8 @@ public class FetchData {
 			
 			while (rs.next()){
 				int colId = 1;
+				
+				m = new HashMap<String, Object>();
 				
 				while ( colId <= totalColumn ){
 					String colName = rsmd.getColumnName(colId);

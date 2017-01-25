@@ -3,7 +3,6 @@ package dataSaver;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import sqlQuery.FetchData;
@@ -17,9 +16,6 @@ public class ReportMaker {
 	String endDate;
 	FetchData fd = null;
 	DataSaver ds = null;
-	
-//	final ArrayList<String> tshParam = new ArrayList<String>(Arrays.asList("Cldh1Lvl","Cldh1Tsh","Cldh2Lvl","Cldh2Tsh", ""
-//			+ "Rh","RhLvl","Ta","Tdew","Vis1Lvl","Vis1Tsh","Vis2Lvl","Vis2Tsh","Wd","Wd_LowLvl","Ws","Ws_LowLvl")); 
 	
 	/**
 	 *  онструктор
@@ -51,7 +47,7 @@ public class ReportMaker {
 	 * ѕолучение общих данных отчета
 	 * @return list map c данными
 	 */
-	public ArrayList<Map <String, Integer>> getTsh(){
+	public Map<String, Object> getTsh(){
 				
 		//получаем данные о пороговых значени€х
 		return fd.getTsh();		
@@ -61,10 +57,10 @@ public class ReportMaker {
 	 * ѕолучаем данные дл€ заголовка в текстовом файле
 	 * @return list map с данными
 	 */
-	public LinkedHashMap<String, String> getHeadData(){
+	public HashMap<String, String> getHeadData(){
 				
 		//дополн€ем остальными данными дл€ заголовка
-		LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
+		HashMap<String, String> m = new HashMap<String, String>();
 		
 		m.put("StartDate", startDate);
 		//commonHeadData.add(m);
@@ -86,7 +82,7 @@ public class ReportMaker {
 	/**
 	 * ѕолучаем данные основной статистики
 	 */
-	public ArrayList<Map<String, Object>> getMainData(){
+	public ArrayList<ArrayList<Map<String, Object>>> getMainData(){
 		
 		return fd.getMainStat();
 	}
@@ -174,54 +170,140 @@ public class ReportMaker {
 		return ds;	
 	}
 	
-	
-	@SuppressWarnings("rawtypes")
+	/**
+	 * ѕишем основные данные заголовка
+	 */
 	public void writeCommonData(){
 		
 		//получаем общие данные
-		LinkedHashMap<String, String> headData = this.getHeadData();
-	
-		ArrayList<String> headDataArr = new ArrayList<String>();
-		
-		//пересобираем значени€ из map в list
-		for (Map.Entry entry: headData.entrySet()){
-			Object value = entry.getValue();
-			headDataArr.add((String) value);
-		}
+		HashMap<String, String> headData = this.getHeadData();
 		
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getHeadTemplate();
-		
-		Integer idData = 0;
-		
-//		if (ds != null){
-//			System.out.println("ds not null");
-//			System.out.println(ds.toString());
-//		}else{
-//			System.out.println("ds is null");
-//		}
-		
+					
 		//ќбъедин€ем данные с шаблоном
 		for (String oneString: headTemplate){
-			if ( oneString.contains("?") ){
-				int indCh = oneString.indexOf("?");
+			
+			int indStart = oneString.indexOf("<")+1;
+			int indEnd = oneString.indexOf(">");
+			if (indStart > 0 || indEnd > 0 ){
+				
+				//получаем значение из Map
+				String item = oneString.substring(indStart, indEnd);
+				String inputVal = headData.get(item);
 				
 				StringBuilder newString = new StringBuilder();
 				
-				newString.append(oneString.substring(0,indCh));
-				newString.append(headDataArr.get(idData));
-				newString.append(oneString.substring(indCh+1));
-				
-				//System.out.println(newString.toString());			
-				
-				ds.writeString(newString.toString());
-				
-				idData++;
+				//склеиваем строку дл€ записи в файл
+				newString.append(oneString.substring(0,indStart-1));
+				newString.append(inputVal);
+				newString.append(oneString.substring(indEnd+1));
+								
+				ds.writeString(newString.toString());				
+			}else{
+				ds.writeString(oneString);
 			}
 		}
+	}
+
+	/**
+	 * ѕишем данные пороговых значений
+	 */
+	public void writeTshData(){
 		
+		//получаем общие данные
+		Map<String, Object> headData = this.getTsh();
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getTshTemplate();
+		
+		this.composeAndWrite(headData, headTemplate);
+	}
+	
+	/**
+	 * ѕишем основные данные статистики
+	 */
+	public void writeMainData(){
+		
+		//получаем общие данные
+		ArrayList<ArrayList<Map<String, Object>>> maindData = this.getMainData();
+		
+		//формируем строки общих данных
+		ArrayList<String> mainTemplate = new TemplateData().getMainTemplate();
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getMainHeadTemplate();
+		
+		//цикл по стацни€м
+		for (ArrayList<Map<String, Object>> station: maindData){
+
+			//получаем им€ станции
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("station", station.get(1).get("station"));
+			//пишем заголовок с индексом станции
+			this.composeAndWrite(m, headTemplate);
+			
+			////цикл по параметрам
+			for (Map<String, Object> param: station){
+				//System.out.println(param);
+				this.composeAndWrite(param, mainTemplate);
+			}
+		}
+	}
+	
+	public void writeExtendData(){
+		
+	}
+	
+	public void writeStatusData(){
+		
+	}
+	
+	/**
+	 * ѕересобираем данные на основе шаблона и переданных значений и пишем в файл
+	 * @param headData данные дл€ вставки в шаблон
+	 * @param headTemplate шаблон строк дл€ вставки в файл отчета
+	 */
+	private void composeAndWrite(Map<String, Object> headData, ArrayList<String> headTemplate){
+		
+		//ќбъедин€ем данные с шаблоном
+		for (String oneString: headTemplate){
+			
+			String currString = oneString;
+			
+			boolean hasNext = true;
+			StringBuilder newString = new StringBuilder();
+			
+			while(hasNext){
+				
+				int indStart = currString.indexOf("<")+1;
+				int indEnd = currString.indexOf(">");
+				if (indStart > 0 || indEnd > 0 ){
+					
+					//получаем значение из Map
+					String item = currString.substring(indStart, indEnd);
+					
+					String inputVal =  headData.get(item).toString();
+					
+					//склеиваем строку дл€ записи в файл
+					newString.append(currString.substring(0,indStart-1));
+					newString.append(inputVal);
+									
+					currString = currString.substring(indEnd+1);
+				}else{
+					newString.append(currString);
+					hasNext = false;
+				}
+			}
+			ds.writeString(newString.toString());				
+		}
+	}
+	
+	/**
+	 * закрываем запись в файл
+	 */
+	public void close(){
 		//построчна€ запись общих данных
 		ds.closeAndFlush();
 	}
-
 }

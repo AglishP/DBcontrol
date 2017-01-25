@@ -143,7 +143,9 @@ public class StarterClass {
 				ReportMaker rm = new ReportMaker(myConn,"test", startDate, endDate);
 				
 				rm.writeCommonData();
-				
+				rm.writeTshData();
+				rm.writeMainData();
+				rm.close();
 				//System.out.println(rm.nameFileCreator("DAY"));
 				
 		

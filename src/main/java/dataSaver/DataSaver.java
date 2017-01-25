@@ -65,23 +65,7 @@ public class DataSaver {
 	 */
 	public void writeString (String s){
 		
-//		if(writer != null){
-//			System.out.println("Have a writer");
-//		}else{
-//			System.out.println("no writer");
-//			
-//		}
-//		if (myFile != null){
-//			System.out.println("myFile is not null");
-//		}else{
-//			System.out.println("myFile is null");
-//		}
-//		
-//		System.out.println(myFile.toString());
-		
-		
 		try {
-			System.out.println(s);
 			writer.write(s);
 			writer.append("\n");
 			writer.flush();
