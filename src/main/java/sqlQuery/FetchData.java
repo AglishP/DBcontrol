@@ -130,16 +130,17 @@ public class FetchData {
 		
 		return responseData;
 	}
-	
+		
 	/**
 	 * 	ѕолучить данные статистики по статусу
 	 */
 	public ArrayList<Map<String, Object>> getStatusStat(){
 		
 		String queryString = "SELECT * FROM lt_estim_res_stat_status "
-				+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' ";
+			+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' "
+					+ " AND period = 36 ";
 		
-		return this.makeSimpleQ(queryString);
+		return this.makeSimpleQ(queryString);		
 	}
 	
 	/**

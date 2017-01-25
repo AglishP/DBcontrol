@@ -64,6 +64,27 @@ public class TemplateData {
 			"		Параметр SEDI:<sedi>"
 			));
 	
+	final ArrayList<String> statusTemplate = new ArrayList<String>(Arrays.asList(
+			"	Дата начала расчета:<indate>",
+			"	Дата окончания расчета:<outdate>",
+			"		Пороговое значение для разделения по корзинам:<tsh_in>",
+			"		Корзина А:<a_basket>",
+			"		Корзина В:<b_basket>",
+			"		Корзина С:<c_basket>",
+			"		Корзина D:<d_basket>",
+			"		Параметр PC:<pc>",
+			"		Параметр PCplus:<pc_plus>",
+			"		Параметр PCminus:<pc_minus>",
+			"		Параметр Pplus:<p_plus>",
+			"		Параметр Pminus:<p_minus>",
+			"		Параметр FAR:<far>",
+			"		Параметр HIT:<hit>",
+			"		Параметр MISS:<miss>",
+			"		Параметр ORSS:<orss>",
+			"		Параметр EDI:<edi>",
+			"		Параметр SEDI:<sedi>"
+			));
+	
 	final ArrayList<String> mainHeadTemplate = new ArrayList<String>(Arrays.asList(
 			"----------------------------------",
 			"	Станция-<station>"
@@ -73,6 +94,12 @@ public class TemplateData {
 			"----------------------------------",
 			"Вывод расширенной статистики по станциям за выбранный период",
 			"	Станция-30791"
+			));
+	
+	final ArrayList<String> statusHeadTemplate = new ArrayList<String>(Arrays.asList(
+			"----------------------------------",
+			"Вывод расширенной статистики по оценке статуса прогноза за выбранный период",
+			"Станция-<station>"
 			));
 	
 	
@@ -119,6 +146,15 @@ public class TemplateData {
 		return extendTemplate;
 	}
 	
+	/**
+	 * Возвращаем массив данных с шаблоном для статистики по статусу
+	 * @return ArrayList<String>
+	 */
+	public ArrayList<String> getStatusTemplate(){
+		
+		return statusTemplate;
+	}
+	
 	
 	/**
 	 * Возвращаем заголовок для общего прогноза
@@ -127,6 +163,15 @@ public class TemplateData {
 	public ArrayList<String> getMainHeadTemplate(){
 		
 		return mainHeadTemplate;
+	}
+	
+	/**
+	 * Возвращаем заголовок для статуса прогноза
+	 * @return ArrayList<String>
+	 */
+	public ArrayList<String> getStatusHeadTemplate(){
+		
+		return statusHeadTemplate;
 	}
 	
 	/**

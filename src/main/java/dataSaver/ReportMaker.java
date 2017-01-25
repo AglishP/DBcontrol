@@ -141,30 +141,6 @@ public class ReportMaker {
 		return sb.toString();
 	}
 
-	public void writeHeadFile(){
-		//получаем имя файла для записи
-		
-		//инициируем класс записи
-		
-		//создаем файл и пишем в него общие данные
-		
-		
-		
-		//получаем пороговые данные
-		
-		
-		
-		//формируем строки с пороговыми данными
-		
-		
-		
-		//построчная запись пороговых данных
-		
-		//закрытие файла
-		
-		
-	}
-	
 	/**
 	 * Инициализация файла для записи
 	 * @return DataSaverClass - через него пишем в файл
@@ -247,7 +223,7 @@ public class ReportMaker {
 
 			//получаем имя станции
 			Map<String, Object> m = new HashMap<String, Object>();
-			m.put("station", station.get(1).get("station"));
+			m.put("station", station.get(0).get("station"));
 			//пишем заголовок с индексом станции
 			this.composeAndWrite(m, headTemplate);
 			
@@ -259,6 +235,9 @@ public class ReportMaker {
 		}
 	}
 	
+	/**
+	 * Пишем данные расширенной статистики
+	 */
 	public void writeExtendData(){
 		//получаем общие данные
 		ArrayList<ArrayList<Map<String, Object>>> extendindData = this.getExtendData();
@@ -274,7 +253,7 @@ public class ReportMaker {
 
 			//получаем имя станции
 			Map<String, Object> m = new HashMap<String, Object>();
-			m.put("station", station.get(1).get("station"));
+			m.put("station", station.get(0).get("station"));
 			//пишем заголовок с индексом станции
 			this.composeAndWrite(m, headTemplate);
 			
@@ -287,8 +266,29 @@ public class ReportMaker {
 		
 	}
 	
+	/**
+	 * Пишем данные по статусу
+	 */
 	public void writeStatusData(){
 		
+		//получаем общие данные
+		ArrayList<Map<String, Object>> headData = this.getStatusData();
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getStatusHeadTemplate();
+		
+		//формируем строки общих данных
+		ArrayList<String> statusTemplate = new TemplateData().getStatusTemplate();
+		Map<String, Object> m = new HashMap<String, Object>();
+		m.put("station", headData.get(0).get("station"));
+		//пишем заголовок с индексом станции
+		this.composeAndWrite(m, headTemplate);
+				
+		//цикл по параметрам
+		for (Map<String, Object> param: headData){
+			//System.out.println(param);
+			this.composeAndWrite(param, statusTemplate);
+		}
 	}
 	
 	/**
