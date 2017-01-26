@@ -9,9 +9,10 @@ import java.io.*;
  */
 public class DataSaver {
 	
-	File myFile = null;
-	FileWriter writer;
-	final String directoryPath = "D:\\IRAM\\ARX_FORECAST_ESTIM\\";
+	private File myFile = null;
+	private FileWriter writer;
+	private final String directoryPath = "D:\\IRAM\\ARX_FORECAST_ESTIM\\";
+	public boolean isOpen = false;
 	
 	/**
 	 * Пустой конструктор по умолчанию
@@ -42,6 +43,7 @@ public class DataSaver {
 				//System.out.println("File exist");
 				try {
 					writer = new FileWriter(inFileName, false);
+					isOpen = true;
 				} catch (IOException e) {
 					System.out.println("Can't make FileWriter");
 					e.printStackTrace();
@@ -51,7 +53,7 @@ public class DataSaver {
 				try {
 					myFile.createNewFile();
 					writer = new FileWriter(myFile, false);
-					
+					isOpen = true;
 				} catch (IOException e) {
 					System.out.println("Can't create file");
 					e.printStackTrace();
@@ -83,6 +85,7 @@ public class DataSaver {
 		try {
 			writer.flush();
 			writer.close();
+			isOpen = false;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

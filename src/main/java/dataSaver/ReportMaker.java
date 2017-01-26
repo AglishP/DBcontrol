@@ -3,6 +3,7 @@ package dataSaver;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import sqlQuery.FetchData;
@@ -11,7 +12,7 @@ import starter.DateBuilder;
 public class ReportMaker {
 	
 	Connection myConn;
-	String calcType;
+	String pathOfDay;
 	String startDate;
 	String endDate;
 	FetchData fd = null;
@@ -29,11 +30,10 @@ public class ReportMaker {
 					String inStartDate,
 					String inEndDate){
 		myConn = inConn;
-		calcType = inType;
+		pathOfDay = inType;
 		startDate = inStartDate;
 		endDate = inEndDate;
 		fd = new FetchData(myConn, startDate, endDate);
-		ds = this.createInitFile("DAY");
 	}
 	
 	/**
@@ -42,7 +42,255 @@ public class ReportMaker {
 	public ReportMaker(){
 		fd = new FetchData(myConn);
 	}
+
+	/**
+	 * По сути тут мы изменяем имя файла, в который будем писать данные
+	 * @param inPath идентификатор времени суток в имени файла
+	 */
+	public void setPathOfDay(String inPath){
+		
+		pathOfDay = inPath;
+		ds = this.prepareFile(pathOfDay);
+	}
 	
+	/**
+	 * метод для записи всего файла с данными сразу изнутри тела класса
+	 */
+	public void writeStatisticFile(){
+		
+		this.setPathOfDay(pathOfDay);
+		
+		this.writeCommonData();
+		this.writeTshData();
+		this.writeMainData();
+		this.writeExtendData();
+		this.writeStatusData();
+		this.close();
+	}
+	
+	/**
+	 * Метод для записи файла отчета с параметрами
+	 * @param inParamOfCalc тип отчета
+	 * @param inPathOfDay время суток для записи
+	 */
+	public void writeStatisticFile(String inParamOfCalc, String inPathOfDay){
+		
+		if (inParamOfCalc == "FOGSTART"){
+			
+			//объединяем строки
+			String buff = new StringBuilder().append(inPathOfDay).append("-").append(inParamOfCalc).toString();
+
+			this.setPathOfDay(buff);
+			
+			//запуск записи
+			this.writeFogStatisticFile();
+			
+		}else if (inParamOfCalc == "BASKET"){
+			
+			this.setPathOfDay(inParamOfCalc);
+			
+			this.writeBasketFile();
+		}
+		
+	}
+	
+	/**
+	 * Запись данных распределения ко корзинам видимости ниже 1000м
+	 */
+	private void writeBasketFile() {
+			
+		this.writeBasketA();
+		this.writeBasketB();
+		this.writeBasketC();
+		this.writeFactFog();
+		this.close();
+	}
+	
+	/**
+	 * Пишем данные из корзины А
+	 */
+	private void writeBasketA() {
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getBasketAHead();
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		
+		//пишем заголовок
+		this.composeAndWrite(m, headTemplate);
+		
+		//получаем данные по корзине a
+		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketAData();
+		
+		//коллекция для записи в файл
+		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
+		
+		//ципл по строкам
+		for (LinkedHashMap<String, Object> item: basketData){
+			
+			ArrayList<String> itemToWrite = new ArrayList<String>();
+			
+			//пересобираем данные в простой list 
+			for (Object val: item.values()){
+				itemToWrite.add(val.toString());
+			}
+			
+			arrToWrite.add(itemToWrite);	
+		}
+		
+		this.linearWrite(arrToWrite);	
+	}
+	
+	/**
+	 * Пишем данные из корзины B
+	 */
+	private void writeBasketB() {
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getBasketBHead();
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		
+		//пишем заголовок
+		this.composeAndWrite(m, headTemplate);
+		
+		//получаем данные по корзине a
+		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketBData();
+		
+		//коллекция для записи в файл
+		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
+		
+		//ципл по строкам
+		for (LinkedHashMap<String, Object> item: basketData){
+			
+			ArrayList<String> itemToWrite = new ArrayList<String>();
+			
+			//пересобираем данные в простой list 
+			for (Object val: item.values()){
+				itemToWrite.add(val.toString());
+			}
+			
+			arrToWrite.add(itemToWrite);	
+		}
+		
+		this.linearWrite(arrToWrite);	
+	}
+	
+	/**
+	 * Пишем данные из корзины B
+	 */
+	private void writeBasketC() {
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getBasketCHead();
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		
+		//пишем заголовок
+		this.composeAndWrite(m, headTemplate);
+		
+		//получаем данные по корзине a
+		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketCData();
+		
+		//коллекция для записи в файл
+		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
+		
+		//ципл по строкам
+		for (LinkedHashMap<String, Object> item: basketData){
+			
+			ArrayList<String> itemToWrite = new ArrayList<String>();
+			
+			//пересобираем данные в простой list 
+			for (Object val: item.values()){
+				itemToWrite.add(val.toString());
+			}
+			
+			arrToWrite.add(itemToWrite);	
+		}
+		
+		this.linearWrite(arrToWrite);	
+	}
+	
+	/**
+	 * Пишем данные по фактической видимости ниже 1000м
+	 */
+	private void writeFactFog() {
+		
+		//формируем строки общих данных
+		ArrayList<String> headTemplate = new TemplateData().getFactFogHeadTemplate();
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		
+		//пишем заголовок
+		this.composeAndWrite(m, headTemplate);
+		
+		//получаем данные по корзине a
+		ArrayList<LinkedHashMap<String, Object>> basketData = this.getFactFogData();
+		
+		//коллекция для записи в файл
+		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
+		
+		//ципл по строкам
+		for (LinkedHashMap<String, Object> item: basketData){
+			
+			ArrayList<String> itemToWrite = new ArrayList<String>();
+			
+			//пересобираем данные в простой list 
+			for (Object val: item.values()){
+				itemToWrite.add(val.toString());
+			}
+			
+			arrToWrite.add(itemToWrite);	
+		}
+		
+		this.linearWrite(arrToWrite);	
+	}
+	
+	/**
+	 * Метод записи данных по времени начала тумана
+	 */
+	private void writeFogStatisticFile() {
+		
+		this.writeFogStartData();
+		this.close();
+	}
+
+	/**
+	 * Пишем данные по времени начала тумана
+	 */
+	private void writeFogStartData() {
+		
+		//получаем данные из таблицы
+		ArrayList<LinkedHashMap<String, Object>> fogData = this.getFogStartData();
+		
+		//коллекция для записи в файл
+		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
+		
+		//ципл по строкам
+		for (LinkedHashMap<String, Object> item: fogData){
+			
+			ArrayList<String> itemToWrite = new ArrayList<String>();
+			
+			//пересобираем данные в простой list 
+			for (Object val: item.values()){
+				itemToWrite.add(val.toString());
+			}
+			
+			arrToWrite.add(itemToWrite);	
+		}
+		
+		this.linearWrite(arrToWrite);	
+	}
+
+	/**
+	 * Получаем данные отчета по времени начала тумана
+	 * @return List c данными
+	 */
+	public ArrayList<LinkedHashMap<String, Object>> getFogStartData() {
+		
+		 return fd.getStartFogStat();
+	}
+
 	/**
 	 * Получение общих данных отчета
 	 * @return list map c данными
@@ -82,7 +330,7 @@ public class ReportMaker {
 	/**
 	 * Получаем данные основной статистики
 	 */
-	public ArrayList<ArrayList<Map<String, Object>>> getMainData(){
+	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getMainData(){
 		
 		return fd.getMainStat();
 	}
@@ -90,7 +338,7 @@ public class ReportMaker {
 	/**
 	 * Получаем данные основной статистики
 	 */
-	public ArrayList<ArrayList<Map<String, Object>>> getExtendData(){
+	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getExtendData(){
 		
 		return fd.getExtendStat();
 	}
@@ -99,16 +347,52 @@ public class ReportMaker {
 	 * Получить данные о статусе
 	 * @return упакованые данные
 	 */
-	public ArrayList<Map<String, Object>> getStatusData(){
+	public ArrayList<LinkedHashMap<String, Object>> getStatusData(){
 		
 		return fd.getStatusStat();
+	}
+	
+	/**
+	 * Получить данные по корзине а
+	 * @return
+	 */
+	public ArrayList<LinkedHashMap<String, Object>> getBasketAData(){
+		
+		return fd.getBasketA();
+	}
+	
+	/**
+	 * Получить данные по корзине b
+	 * @return
+	 */
+	public ArrayList<LinkedHashMap<String, Object>> getBasketBData(){
+		
+		return fd.getBasketB();
+	}
+	
+	/**
+	 * Получить данные по корзине c
+	 * @return
+	 */
+	public ArrayList<LinkedHashMap<String, Object>> getBasketCData(){
+		
+		return fd.getBasketC();
+	}
+	
+	/**
+	 * Получить данные по количеству значений видимости менее 1000м
+	 * @return
+	 */
+	public ArrayList<LinkedHashMap<String, Object>> getFactFogData(){
+		
+		return fd.getFactFogTime();
 	}
 	
 	/**
 	 * Получить данные о статистике времени начала тумана
 	 * @return упакованые данные
 	 */
-	public ArrayList<Map<String, Object>> getStartFogData(){
+	public ArrayList<LinkedHashMap<String, Object>> getStartFogData(){
 		
 		return fd.getStartFogStat();
 	}
@@ -118,7 +402,7 @@ public class ReportMaker {
 	 * @param inPathOfDay String время суток, как метка в имени файла
 	 * @return строка с полным именем файла
 	 */
-	public String nameFileCreator(String inPathOfDay){
+	private String createFileName(String inPathOfDay){
 		//маска имени: 2016-01-01 2016-12-31 build-2017-01-20 10-18 4ч-BD
 		
 		StringBuilder sb = new StringBuilder();
@@ -134,7 +418,7 @@ public class ReportMaker {
 		sb.append( commonData.get("CurrDate") );
 		sb.append(" ");
 		sb.append( commonData.get("CurrTime"));
-		sb.append(" 4ч-BD-JAVA_TEST");
+		sb.append(" 4ч-BD-JAVA_TEST-");
 		sb.append(inPathOfDay);
 		sb.append(".txt");
 		
@@ -145,9 +429,14 @@ public class ReportMaker {
 	 * Инициализация файла для записи
 	 * @return DataSaverClass - через него пишем в файл
 	 */
-	public DataSaver createInitFile(String inPathOfDay){
+	private DataSaver prepareFile(String inPathOfDay){
 		
-		String fileName = this.nameFileCreator(inPathOfDay);
+		//проверка что файл еще не закрыт
+		if (ds != null && ds.isOpen ){
+			ds.closeAndFlush();
+		}
+		
+		String fileName = this.createFileName(inPathOfDay);
 		
 		DataSaver ds = new DataSaver(fileName);
 		
@@ -157,7 +446,7 @@ public class ReportMaker {
 	/**
 	 * Пишем основные данные заголовка
 	 */
-	public void writeCommonData(){
+	private void writeCommonData(){
 		
 		//получаем общие данные
 		HashMap<String, String> headData = this.getHeadData();
@@ -193,7 +482,7 @@ public class ReportMaker {
 	/**
 	 * Пишем данные пороговых значений
 	 */
-	public void writeTshData(){
+	private void writeTshData(){
 		
 		//получаем общие данные
 		Map<String, Object> headData = this.getTsh();
@@ -207,10 +496,10 @@ public class ReportMaker {
 	/**
 	 * Пишем основные данные статистики
 	 */
-	public void writeMainData(){
+	private void writeMainData(){
 		
 		//получаем общие данные
-		ArrayList<ArrayList<Map<String, Object>>> maindData = this.getMainData();
+		ArrayList<ArrayList<LinkedHashMap<String, Object>>> maindData = this.getMainData();
 		
 		//формируем строки общих данных
 		ArrayList<String> mainTemplate = new TemplateData().getMainTemplate();
@@ -219,7 +508,7 @@ public class ReportMaker {
 		ArrayList<String> headTemplate = new TemplateData().getMainHeadTemplate();
 		
 		//цикл по стацниям
-		for (ArrayList<Map<String, Object>> station: maindData){
+		for (ArrayList<LinkedHashMap<String, Object>> station: maindData){
 
 			//получаем имя станции
 			Map<String, Object> m = new HashMap<String, Object>();
@@ -238,9 +527,9 @@ public class ReportMaker {
 	/**
 	 * Пишем данные расширенной статистики
 	 */
-	public void writeExtendData(){
+	private void writeExtendData(){
 		//получаем общие данные
-		ArrayList<ArrayList<Map<String, Object>>> extendindData = this.getExtendData();
+		ArrayList<ArrayList<LinkedHashMap<String, Object>>> extendindData = this.getExtendData();
 		
 		//формируем строки общих данных
 		ArrayList<String> extendTemplate = new TemplateData().getExtendTemplate();
@@ -248,15 +537,15 @@ public class ReportMaker {
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getExtendHeadTemplate();
 		
+		//получаем имя станции
+		Map<String, Object> m = new HashMap<String, Object>();
+		//m.put("station", extendindData.get(0).get("station"));
+		//пишем заголовок с индексом станции
+		this.composeAndWrite(m, headTemplate);
+		
 		//цикл по стацниям
-		for (ArrayList<Map<String, Object>> station: extendindData){
+		for (ArrayList<LinkedHashMap<String, Object>> station: extendindData){
 
-			//получаем имя станции
-			Map<String, Object> m = new HashMap<String, Object>();
-			m.put("station", station.get(0).get("station"));
-			//пишем заголовок с индексом станции
-			this.composeAndWrite(m, headTemplate);
-			
 			////цикл по параметрам
 			for (Map<String, Object> param: station){
 				//System.out.println(param);
@@ -269,10 +558,10 @@ public class ReportMaker {
 	/**
 	 * Пишем данные по статусу
 	 */
-	public void writeStatusData(){
+	private void writeStatusData(){
 		
 		//получаем общие данные
-		ArrayList<Map<String, Object>> headData = this.getStatusData();
+		ArrayList<LinkedHashMap<String, Object>> headData = this.getStatusData();
 		
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getStatusHeadTemplate();
@@ -332,9 +621,31 @@ public class ReportMaker {
 	}
 	
 	/**
+	 * Пишем в строчку данные из массива с разделителем ;
+	 * @param arrToWrite
+	 */
+	private void linearWrite(ArrayList<ArrayList<String>> arrToWrite){
+		
+		//цикл по строкам
+		for (ArrayList<String> row: arrToWrite){
+			
+			//собираем данные в строку
+			StringBuilder sb = new StringBuilder();
+			
+			for (String item: row){
+			
+				sb.append(item);
+				sb.append(";");
+			}
+			ds.writeString(sb.toString());
+		}
+		
+	}
+	
+	/**
 	 * закрываем запись в файл
 	 */
-	public void close(){
+	private void close(){
 		//построчная запись общих данных
 		ds.closeAndFlush();
 	}

@@ -142,15 +142,10 @@ public class StarterClass {
 				
 				ReportMaker rm = new ReportMaker(myConn,"test", startDate, endDate);
 				
-				rm.writeCommonData();
-				rm.writeTshData();
-				rm.writeMainData();
-				rm.writeExtendData();
-				rm.writeStatusData();
-				rm.close();
-				//System.out.println(rm.nameFileCreator("DAY"));
+				//rm.writeStatisticFile();
+				//rm.writeStatisticFile("FOGSTART", "DAY");
+				rm.writeStatisticFile("BASKET", "DAY");
 				
-		
 				
 			case "exit":
 				runProgramm = false;

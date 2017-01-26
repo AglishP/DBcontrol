@@ -43,6 +43,7 @@ public class TemplateData {
 			));
 	
 	final ArrayList<String> extendTemplate = new ArrayList<String>(Arrays.asList(
+			"	Станция-<station>",
 			"	Дата начала расчета:<indate>",
 			"	Дата окончания расчета:<outdate>",
 			"		Параметр:<param>",
@@ -92,14 +93,58 @@ public class TemplateData {
 	
 	final ArrayList<String> extendHeadTemplate = new ArrayList<String>(Arrays.asList(
 			"----------------------------------",
-			"Вывод расширенной статистики по станциям за выбранный период",
-			"	Станция-30791"
+			"Вывод расширенной статистики по станциям за выбранный период"
 			));
 	
 	final ArrayList<String> statusHeadTemplate = new ArrayList<String>(Arrays.asList(
 			"----------------------------------",
 			"Вывод расширенной статистики по оценке статуса прогноза за выбранный период",
 			"Станция-<station>"
+			));
+	
+	final ArrayList<String> basketAHeadTemplate = new ArrayList<String>(Arrays.asList(
+			" ",
+			"корзина a, только срок, за который прогноз оправдался",
+			" "
+			));
+	
+	final ArrayList<String> basketBHeadTemplate = new ArrayList<String>(Arrays.asList(
+			" ",
+			" ",
+			" ",
+			"********************************************************************",
+			"********************************************************************",
+			"********************************************************************",
+			" ",
+			" ",
+			"корзина b",
+			" "
+			));
+	
+	final ArrayList<String> basketCHeadTemplate = new ArrayList<String>(Arrays.asList(
+			" ",
+			" ",
+			" ",
+			"********************************************************************",
+			"********************************************************************",
+			"********************************************************************",
+			" ",
+			" ",
+			"корзина b",
+			" "
+			));
+	
+	final ArrayList<String> factFogHeadTemplate = new ArrayList<String>(Arrays.asList(
+			" ",
+			" ",
+			" ",
+			"********************************************************************",
+			"********************************************************************",
+			"********************************************************************",
+			" ",
+			" ",
+			"срок, когда видимость была ниже 1000м",
+			" "
 			));
 	
 	
@@ -155,7 +200,6 @@ public class TemplateData {
 		return statusTemplate;
 	}
 	
-	
 	/**
 	 * Возвращаем заголовок для общего прогноза
 	 * @return ArrayList<String>
@@ -181,5 +225,41 @@ public class TemplateData {
 	public ArrayList<String> getExtendHeadTemplate(){
 		
 		return extendHeadTemplate;
+	}
+	
+	/**
+	 * Получаем заголовок для корзины а
+	 * @return
+	 */
+	public ArrayList<String> getBasketAHead(){
+		
+		return basketAHeadTemplate;
+	}
+	
+	/**
+	 * Получаем заголовок для корзины b
+	 * @return
+	 */
+	public ArrayList<String> getBasketBHead(){
+			
+			return basketBHeadTemplate;
+		}
+	
+	/**
+	 * Получаем заголовок для корзины с
+	 * @return
+	 */
+	public ArrayList<String> getBasketCHead(){
+		
+		return basketCHeadTemplate;
+	}
+	
+	/**
+	 * Получить заголовок для фактических данных видимости ниже 1000м
+	 * @return
+	 */
+	public ArrayList<String> getFactFogHeadTemplate(){
+		
+		return factFogHeadTemplate;
 	}
 }

@@ -1,6 +1,8 @@
 package protocol;
 
 import java.sql.Connection;
+
+import dataSaver.ReportMaker;
 import sqlQuery.SqlQuery;
 import sqlQuery.TableWorker;
 
@@ -27,6 +29,7 @@ public class ProtocolIrkutsk {
 		final String fogStartType = "fogStart";
 		final String day = "day";
 		final String night = "night";
+		final String allDay = "ALL";
 		
 		//п.1 Расчет основной, расширенной статистики и расчет по статусу
 		
@@ -43,11 +46,8 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(statusType);
 		
 		//собираем данные в отчет
-		
-		//п2 запускаем функцию сборки данных по началу тумана в таблицу fog_analyze
-		sqlQuery.makeCalc(fogStartType);
-		
-		//п3 выгружаем данные из таблицы lt_fog_start_stat в текстовый файл для последующей вставки в xml
+		ReportMaker rm = new ReportMaker(myConn,allDay, startDate, endDate);
+		rm.writeStatisticFile();
 		
 		//п4 разбить данные из таблиц lt_estim_xxxxx в подтаблицы день/ночь
 		TableWorker tw = new TableWorker(myConn, startDate, endDate);
@@ -63,7 +63,24 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(mainType);
 		sqlQuery.makeCalc(extendType);
 		
-		//п8 экспорт основной и расширенной статиситки в файл
+		//п14.1 разбиваем данные из таблицы статусов
+		tw.sep(statusType);
+		
+		//п14.2 удаляем данные из таблицы статусов
+		tw.del(statusType);
+		
+		//п14.3 загружаем данные за день в таблицу статусов
+		tw.load(statusType, day);
+		
+		//п13 в основную таблицу вставляем данные за день, чтобы получить полный набор данных за сутки
+		tw.load(mainType, night);
+		
+		//п14.4 запускаем расчет статуса 
+		sqlQuery.makeCalc(statusType);
+		
+		//п8 экспорт всей статиситки в файл
+		rm.setPathOfDay(day);
+		rm.writeStatisticFile();
 		
 		//п9 удаляем данные из основных таблиц
 		tw.del(mainType);
@@ -75,24 +92,8 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(mainType);
 		sqlQuery.makeCalc(extendType);
 		
-		//п12 экспорт основной и расширенной статиситки в файл
-		
 		//п13 в основную таблицу вставляем данные за день, чтобы получить полный набор данных за сутки
 		tw.load(mainType, day);
-		
-		//п14.1 разбиваем данные из таблицы статусов
-		tw.sep(statusType);
-		
-		//п14.2 удаляем данные из таблицы статусов
-		tw.del(statusType);
-		
-		//п14.3 загружаем данные за день в таблицу статусов
-		tw.load(statusType, day);
-		
-		//п14.4 запускаем расчет статуса 
-		sqlQuery.makeCalc(statusType);
-				
-		//п14.5 экспорт основной и расширенной статиситки в файл
 		
 		//п14.6 удаляем данные из таблицы со статусами
 		tw.del(statusType);
@@ -104,9 +105,17 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(statusType);
 		
 		//п14.9 экспорт статистики статуса в файл
+		rm.setPathOfDay(night);
+		rm.writeStatisticFile();
 		
 		//п14.10 загружаем в статус данные за день, чтобы получить полные сутки
 		tw.load(statusType, day);
+		
+		//п2 запускаем функцию сборки данных по началу тумана в таблицу fog_analyze
+		sqlQuery.makeCalc(fogStartType);
+		
+		//п3 выгружаем данные из таблицы lt_fog_start_stat в текстовый файл для последующей вставки в xml
+		rm.writeStatisticFile("FOGSTART", allDay);
 		
 		//п15.1 разбиваем данные в таблице начала тумана
 		tw.sep(fogStartType);
@@ -121,6 +130,7 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(fogStartType);
 		
 		//п15.5 экспорт статистики в файл
+		rm.writeStatisticFile("FOGSTART", day);
 		
 		//п15.6 удаляем данные из таблицы
 		tw.del(fogStartType);
@@ -132,11 +142,13 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(fogStartType);
 		
 		//п15.9 экспорт статистики 
+		rm.writeStatisticFile("FOGSTART", night);
 		
 		//п15.10 загрузка данных за день чтобы получить полные сутки
 		tw.load(fogStartType, day);
 		
 		//п16 рапределение данных по корзинам и экспорт в файл
+		
 		
 		//п17 расчет среднего времени появления предупреждения о тумане
 		
