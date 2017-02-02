@@ -9,21 +9,24 @@ public class FunctionName {
 	
 	String typeFunc;
 	String queryName;
+	ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "main","extend","status","fogStart")); 
+	Map<String, String> mainFuncName;
 	
-	//конструктор
+	/**
+	 * Конструктор по умолчанию
+	 */
 	public FunctionName(){
 			
 		}
 	
-	//конструктор
+	/**
+	 * Конструктор с параметром типа
+	 * @param inType String типданных
+	 */
 	public FunctionName(String inType){
 		setType(inType);
 	}
 		
-	//допустимые наборы функций
-	ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "main","extend","status","fogStart")); 
-	Map<String, String> mainFuncName;
-	
 	//устанавливаем тип 
 	public void setType(String inType) {
 
@@ -33,7 +36,11 @@ public class FunctionName {
 		}
 	}
 
-	//получаем имя функции по параметру, который передали
+	/**
+	 * получаем имя функции по параметру, который передали
+	 * @param inParamName String метеопараметр
+	 * @return String имя фунции
+	 */
 	public String getName(String inParamName) {
 		
 		String result = "";

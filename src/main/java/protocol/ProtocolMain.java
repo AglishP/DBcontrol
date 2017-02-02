@@ -36,7 +36,7 @@ public class ProtocolMain {
 	public void runProtocol(){
 		
 		switch (location){
-		case "irkutsk":
+		case "Irkutsk":
 			
 			ProtocolIrkutsk pi = new ProtocolIrkutsk(myConn, startDate, endDate);
 			pi.RunProtocol();

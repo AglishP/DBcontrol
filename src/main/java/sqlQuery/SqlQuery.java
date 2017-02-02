@@ -19,10 +19,18 @@ public class SqlQuery {
 	private Statement stmt = null;
 	private FunctionName fn;
 		
-	// конструктор
+	/**
+	 * Конструктор по умолчанию
+	 */
 	public SqlQuery(){};
 	
-	// конструктор
+	/**
+	 * Конструктор с параметрами
+	 * @param inconnection Connection
+	 * @param incalcType String тип расчета
+	 * @param instartDate String начальная дата
+	 * @param inendDate String конечная дата
+	 */
 	public SqlQuery(Connection inconnection,
 					String incalcType,
 					String instartDate,
@@ -35,19 +43,48 @@ public class SqlQuery {
 		fn = new FunctionName(calcType);
 	}
 
+	/**
+	 * Конструктор с параметрами
+	 * @param inconnection Connection соединение
+	 * @param instartDate String начальная дата
+	 * @param inendDate String конечная дата
+	 */
+	public SqlQuery(Connection inconnection,
+					String instartDate,
+					String inendDate) {
+		
+		myconn = inconnection;
+		startDate = instartDate;
+		endDate = inendDate;
+	}
+	
+	/**
+	 * Установка типа расчета
+	 * @param incalcType String тип расчета
+	 */
 	public void setCalcType(String incalcType){
 		if (allowedCalcType.indexOf(incalcType) != -1){
 			calcType = incalcType;
+			
+			fn = new FunctionName(calcType);
 		}else{
 			calcType = null;
 		}
 	}
 		
+	/**
+	 * Запуск расчета с одновременной установкой типа
+	 * @param inType String тип расчета
+	 */
 	public void makeCalc(String inType){
 	
 		this.setCalcType(inType);
+		this.makeCalc();
 	}
 	
+	/**
+	 * Запуск расчета статистики
+	 */
 	public void makeCalc(){
 		
 		if (calcType == allowedCalcType.get(0)){
@@ -89,7 +126,8 @@ public class SqlQuery {
 		try {
 			stmt = myconn.createStatement();
 			for (String meteoParam: typeName){
-				queryString = "SELECT "+fn.getName(meteoParam)+"('30791', 24, "+startDate+","+endDate+", )";
+				
+				queryString = "SELECT "+fn.getName(meteoParam)+"('30791', 24, '"+startDate+"','"+endDate+"' )";
 				System.out.println(queryString);
 				stmt.executeQuery(queryString);
 			}
@@ -111,16 +149,16 @@ public class SqlQuery {
 		try {
 			//TASK: переделать под циклы
 			stmt = myconn.createStatement();
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',3000, 24, "+startDate+","+endDate+", )";
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',3000, 24, '"+startDate+"','"+endDate+"')";
 			System.out.println(queryString);
 			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',1000, 24, "+startDate+","+endDate+", )";
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',1000, 24, '"+startDate+"','"+endDate+"' )";
 			System.out.println(queryString);
 			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 24, "+startDate+","+endDate+", )";
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 24, '"+startDate+"','"+endDate+"' )";
 			System.out.println(queryString);
 			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','cldh',60, 24, "+startDate+","+endDate+", )";
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','cldh',60, 24, '"+startDate+"','"+endDate+"' )";
 			System.out.println(queryString);
 			stmt.executeQuery(queryString);
 		} catch (SQLException e) {
@@ -140,7 +178,7 @@ public class SqlQuery {
 			//TASK: переделать под циклы
 			stmt = myconn.createStatement();
 			System.out.println(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 36, "+startDate+","+endDate+", )";
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 36, '"+startDate+"','"+endDate+"' )";
 			stmt.executeQuery(queryString);
 			
 		} catch (SQLException e) {

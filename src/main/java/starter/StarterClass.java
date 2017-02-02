@@ -1,12 +1,10 @@
 package starter;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Scanner;
 import dataSaver.DataSaver;
 import dataSaver.ReportMaker;
-import sqlQuery.FetchData;
+import protocol.ProtocolMain;
 import sqlQuery.SqlQuery;
 
 
@@ -78,16 +76,16 @@ public class StarterClass {
 				case "this":								
 					db = new DateBuilder("this");
 					startDate = db.getStartDay();
-					System.out.println(startDate);
+					//System.out.println(startDate);
 					endDate = db.getEndDay();
-					System.out.println(endDate);
+					//System.out.println(endDate);
 					break;
 				case "prev":
 					db = new DateBuilder("prev");
 					startDate = db.getStartDay();
-					System.out.println(startDate);
+					//System.out.println(startDate);
 					endDate = db.getEndDay();
-					System.out.println(endDate);
+					//System.out.println(endDate);
 					break;
 				default:
 					System.out.println("No such command: " + inputCommand[1]);	
@@ -95,15 +93,15 @@ public class StarterClass {
 				}				
 			
 				String calcType = null;
-				SqlQuery sqlQuery = new SqlQuery(myConn, calcType,startDate, endDate);
 				
-				if (startDate != null || endDate != null){break;}
+				if (startDate == null || endDate == null){break;}
 				
 				switch(inputCommand[2]){
 				case "main":
 					
 					//сначала считаем базовые параметры статистики
 					calcType = "main";
+					SqlQuery sqlQuery = new SqlQuery(myConn, calcType,startDate, endDate);
 					sqlQuery.setCalcType(calcType);
 					sqlQuery.makeCalc();
 					
@@ -116,7 +114,8 @@ public class StarterClass {
 				case "status":
 					
 					calcType = "status";
-					sqlQuery.makeCalc();
+					SqlQuery sqlQueryStatus = new SqlQuery(myConn, calcType,startDate, endDate);
+					sqlQueryStatus.makeCalc();
 					break;
 					
 				case "alldata":
@@ -124,8 +123,9 @@ public class StarterClass {
 					
 				case "protocol":
 					//рассчет по протоколу иркутска
-					
-									
+					System.out.println("Calc protocol Irkutsk");
+					ProtocolMain pm = new ProtocolMain(myConn, "Irkutsk", startDate, endDate);
+					pm.runProtocol();				
 					break;
 					
 				default:
