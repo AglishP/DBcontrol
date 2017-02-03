@@ -14,7 +14,8 @@ public class SqlQuery {
 	//private Array stationArray;
 	private Connection myconn; 
 	private String queryString;
-	private ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "vis","cldh","ta","tdew","rh","ws","wd")); 
+	private ArrayList<String> typeName = new ArrayList<String>(Arrays.asList( "vis","cldh","ta","tdew","rh","ws","wd"));
+	private ArrayList<String> stationList = new ArrayList<String>(Arrays.asList("30791", "30001", "30002", "30003"));
 	private ArrayList<String> allowedCalcType = new ArrayList<String>(Arrays.asList( "main","extend","status","fogStart")); 
 	private Statement stmt = null;
 	private FunctionName fn;
@@ -125,11 +126,13 @@ public class SqlQuery {
 		
 		try {
 			stmt = myconn.createStatement();
-			for (String meteoParam: typeName){
-				
-				queryString = "SELECT "+fn.getName(meteoParam)+"('30791', 24, '"+startDate+"','"+endDate+"' )";
-				System.out.println(queryString);
-				stmt.executeQuery(queryString);
+			for (String station: stationList){ 
+				for (String meteoParam: typeName){
+					
+					queryString = "SELECT "+fn.getName(meteoParam)+"('"+station+"', 24, '"+startDate+"','"+endDate+"' )";
+					System.out.println(queryString);
+					stmt.executeQuery(queryString);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -148,19 +151,21 @@ public class SqlQuery {
 		
 		try {
 			//TASK: переделать под циклы
-			stmt = myconn.createStatement();
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',3000, 24, '"+startDate+"','"+endDate+"')";
-			System.out.println(queryString);
-			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',1000, 24, '"+startDate+"','"+endDate+"' )";
-			System.out.println(queryString);
-			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 24, '"+startDate+"','"+endDate+"' )";
-			System.out.println(queryString);
-			stmt.executeQuery(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','cldh',60, 24, '"+startDate+"','"+endDate+"' )";
-			System.out.println(queryString);
-			stmt.executeQuery(queryString);
+			for(String station: stationList){
+				stmt = myconn.createStatement();
+				queryString = "SELECT "+fn.getName(calcType)+"('"+station+"','vis',3000, 24, '"+startDate+"','"+endDate+"')";
+				System.out.println(queryString);
+				stmt.executeQuery(queryString);
+				queryString = "SELECT "+fn.getName(calcType)+"('"+station+"','vis',1000, 24, '"+startDate+"','"+endDate+"' )";
+				System.out.println(queryString);
+				stmt.executeQuery(queryString);
+				queryString = "SELECT "+fn.getName(calcType)+"('"+station+"','vis',800, 24, '"+startDate+"','"+endDate+"' )";
+				System.out.println(queryString);
+				stmt.executeQuery(queryString);
+				queryString = "SELECT "+fn.getName(calcType)+"('"+station+"','cldh',60, 24, '"+startDate+"','"+endDate+"' )";
+				System.out.println(queryString);
+				stmt.executeQuery(queryString);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -177,8 +182,8 @@ public class SqlQuery {
 		try {
 			//TASK: переделать под циклы
 			stmt = myconn.createStatement();
+			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',1000, 36, '"+startDate+"','"+endDate+"' )";
 			System.out.println(queryString);
-			queryString = "SELECT "+fn.getName(calcType)+"('30791','vis',800, 36, '"+startDate+"','"+endDate+"' )";
 			stmt.executeQuery(queryString);
 			
 		} catch (SQLException e) {

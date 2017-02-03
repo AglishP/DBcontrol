@@ -67,7 +67,7 @@ public class FunctionName {
 			mainFuncName.put("wd","sum_wd_void");
 			mainFuncName.put("ws","sum_ws_void");
 		}else if (typeFunc == typeName.get(1)){
-			mainFuncName.put("extend","f_stat_sb");
+			mainFuncName.put("extend","f_stat");
 		}else if (typeFunc == typeName.get(2)){	
 			mainFuncName.put("status","f_stat_status");
 		}else if (typeFunc == typeName.get(3)){	

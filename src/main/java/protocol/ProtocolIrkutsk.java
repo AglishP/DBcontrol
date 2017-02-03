@@ -5,6 +5,7 @@ import java.sql.Connection;
 import dataSaver.ReportMaker;
 import sqlQuery.SqlQuery;
 import sqlQuery.TableWorker;
+import starter.DateBuilder;
 
 //реализация протокола расчета статистики для иркутстка от октября 2016года
 public class ProtocolIrkutsk {
@@ -31,21 +32,24 @@ public class ProtocolIrkutsk {
 		final String night = "night";
 		final String allDay = "ALL";
 		
-		//п.1 Расчет основной, расширенной статистики и расчет по статусу
-		
+//		//ставим метку времени начала протогола
+		DateBuilder db = new DateBuilder();
+//		System.out.println(db.getCurrTime());
+//		
+//		//п.1 Расчет основной, расширенной статистики и расчет по статусу
 		SqlQuery sqlQuery = new SqlQuery(myConn, startDate, endDate);
-		
-		//расчет основной статистики
-		sqlQuery.makeCalc(mainType);
-		System.out.println("complete mainCalc");
-		
-		//меняем тип на расширенный
+//		
+//		//расчет основной статистики
+//		sqlQuery.makeCalc(mainType);
+//		System.out.println("complete mainCalc");
+//		
+//		//меняем тип на расширенный
 		sqlQuery.makeCalc(extendType);
 		System.out.println("complete extendCalc");
-		
-		//теперь статус
-		sqlQuery.makeCalc(statusType);
-		System.out.println("complete statusCalc");
+//		
+//		//теперь статус
+//		sqlQuery.makeCalc(statusType);
+//		System.out.println("complete statusCalc");
 		
 		//собираем данные в отчет
 		ReportMaker rm = new ReportMaker(myConn,allDay, startDate, endDate);
@@ -189,7 +193,7 @@ public class ProtocolIrkutsk {
 		//п17 расчет среднего времени появления предупреждения о тумане
 		
 		
-		
+		System.out.println(db.getCurrTime());
 		
 	}
 	

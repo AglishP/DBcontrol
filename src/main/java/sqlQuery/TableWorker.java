@@ -56,17 +56,17 @@ public class TableWorker {
 					queryString = "INSERT INTO "+tableName+stationId+" SELECT * FROM "+tableName+stationId+tableSource+" "
 							+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 					System.out.println(queryString);
-					stmt.executeQuery(queryString);
+					stmt.executeUpdate(queryString);
 				}
 				
 			}else if(inTableType == "status"){
 				
 				tableName = "lt_estim_status";
 				
-				queryString = "INSERT INTO "+tableName+" SELECT * FROM "+tableName+tableSource+""
-						+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+				queryString = "INSERT INTO "+tableName+" SELECT * FROM "+tableName+tableSource+" "
+						+ "WHERE DATE(timemessage)>='"+startDate+"' AND DATE(timemessage)<='"+endDate+"'";
 				System.out.println(queryString);
-				stmt.executeQuery(queryString);
+				stmt.executeUpdate(queryString);
 				
 			}else if(inTableType == "fogStart"){
 				
@@ -75,7 +75,7 @@ public class TableWorker {
 				queryString = "INSERT INTO "+tableName+" SELECT * FROM "+tableName+tableSource+""
 						+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 				System.out.println(queryString);
-				stmt.executeQuery(queryString);
+				stmt.executeUpdate(queryString);
 			}
 			
 		} catch (SQLException e) {
@@ -108,7 +108,7 @@ public class TableWorker {
 					queryString = "DELETE FROM "+tableName+stationId+" "
 							+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 					System.out.println(queryString);
-					stmt.executeQuery(queryString);
+					stmt.executeUpdate(queryString);
 				}
 				
 			}else if(inTableType == "status"){
@@ -116,9 +116,9 @@ public class TableWorker {
 				tableName = "lt_estim_status";
 				
 				queryString = "DELETE FROM "+tableName+" "
-						+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+						+ "WHERE DATE(timemessage)>='"+startDate+"' AND DATE(timemessage)<='"+endDate+"'";
 				System.out.println(queryString);
-				stmt.executeQuery(queryString);
+				stmt.executeUpdate(queryString);
 				
 			}else if(inTableType == "fogStart"){
 				
@@ -127,7 +127,7 @@ public class TableWorker {
 				queryString = "DELETE FROM "+tableName+" "
 						+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 				System.out.println(queryString);
-				stmt.executeQuery(queryString);
+				stmt.executeUpdate(queryString);
 			}
 			
 		} catch (SQLException e) {
@@ -171,11 +171,11 @@ public class TableWorker {
 							
 							for (String currHour: hourList){
 						
-								queryString = "INSERT INTO "+tableName+stationId+typePathOfDay+" SELECT * FROM "+tableName+stationId+" "
-											+ "AND execute(hour from tmstart) = "+currHour+" "
-											+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+								queryString = "INSERT INTO "+tableName+stationId+"_"+typePathOfDay+" SELECT * FROM "+tableName+stationId+" "
+											+ "WHERE extract(hour from tmstart) = "+currHour+" "
+											+ "DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 								System.out.println(queryString);
-								stmt.executeQuery(queryString);
+								stmt.executeUpdate(queryString);
 							}
 						}
 					}
@@ -196,10 +196,10 @@ public class TableWorker {
 						for (String currHour: hourList){
 						
 							queryString = "INSERT INTO "+tableName+typePathOfDay+" SELECT * FROM "+tableName+" "
-									+ "AND execute(hour from tmstart) = "+currHour+" "
-									+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+									+ "AND extract(hour from timemessage) = "+currHour+" "
+									+ "WHERE DATE(timemessage)>='"+startDate+"' AND DATE(timemessage)<='"+endDate+"'";
 							System.out.println(queryString);
-							stmt.executeQuery(queryString);
+							stmt.executeUpdate(queryString);
 						}
 					}
 					
@@ -219,10 +219,10 @@ public class TableWorker {
 						for (String currHour: hourList){
 						
 							queryString = "INSERT INTO "+tableName+typePathOfDay+" SELECT * FROM "+tableName+" "
-									+ "AND execute(hour from tmstart) = "+currHour+" "
+									+ "AND extract(hour from tmstart) = "+currHour+" "
 									+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 							System.out.println(queryString);
-							stmt.executeQuery(queryString);
+							stmt.executeUpdate(queryString);
 						}
 					}
 				}

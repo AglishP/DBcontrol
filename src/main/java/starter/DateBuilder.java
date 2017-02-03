@@ -20,7 +20,7 @@ public class DateBuilder {
 	 * Конструтор по умолчанию
 	 */
 	public DateBuilder(){
-		
+		calendar = Calendar.getInstance();
 	}
 	
 	/**

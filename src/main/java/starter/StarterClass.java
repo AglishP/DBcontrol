@@ -6,6 +6,7 @@ import dataSaver.DataSaver;
 import dataSaver.ReportMaker;
 import protocol.ProtocolMain;
 import sqlQuery.SqlQuery;
+import sqlQuery.TableWorker;
 
 
 public class StarterClass {
@@ -140,11 +141,13 @@ public class StarterClass {
 				endDate = db.getEndDay();
 				
 				
-				ReportMaker rm = new ReportMaker(myConn,"test", startDate, endDate);
+				TableWorker tw = new TableWorker(myConn, startDate, endDate);
+				tw.load("main", "day");
+				tw.load("main", "night");
 				
-				//rm.writeStatisticFile();
-				//rm.writeStatisticFile("FOGSTART", "DAY");
-				rm.writeStatisticFile("BASKET", "DAY");
+				tw.load("status", "day");
+				tw.load("status", "night");
+				break;
 				
 				
 			case "exit":
