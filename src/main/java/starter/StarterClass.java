@@ -3,7 +3,6 @@ package starter;
 import java.sql.*;
 import java.util.Scanner;
 import dataSaver.DataSaver;
-import dataSaver.ReportMaker;
 import protocol.ProtocolMain;
 import sqlQuery.SqlQuery;
 import sqlQuery.TableWorker;
@@ -142,11 +141,10 @@ public class StarterClass {
 				
 				
 				TableWorker tw = new TableWorker(myConn, startDate, endDate);
-				tw.load("main", "day");
-				tw.load("main", "night");
 				
-				tw.load("status", "day");
-				tw.load("status", "night");
+				
+				//tw.del("fogStart");
+				//tw.load("fogStart", "day");
 				break;
 				
 				
@@ -154,7 +152,7 @@ public class StarterClass {
 				runProgramm = false;
 				System.out.println("exit programm");	
 				inputStream.close();
-				
+				break;
 			default:
 				System.out.println("No such command: " + inputCommand[0]);
 			}

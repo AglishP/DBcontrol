@@ -73,7 +73,7 @@ public class TableWorker {
 				tableName = "fog_analyze";
 				
 				queryString = "INSERT INTO "+tableName+" SELECT * FROM "+tableName+tableSource+""
-						+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+						+ " WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 				System.out.println(queryString);
 				stmt.executeUpdate(queryString);
 			}
@@ -173,7 +173,7 @@ public class TableWorker {
 						
 								queryString = "INSERT INTO "+tableName+stationId+"_"+typePathOfDay+" SELECT * FROM "+tableName+stationId+" "
 											+ "WHERE extract(hour from tmstart) = "+currHour+" "
-											+ "DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+											+ "AND DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 								System.out.println(queryString);
 								stmt.executeUpdate(queryString);
 							}
@@ -195,9 +195,9 @@ public class TableWorker {
 					
 						for (String currHour: hourList){
 						
-							queryString = "INSERT INTO "+tableName+typePathOfDay+" SELECT * FROM "+tableName+" "
-									+ "AND extract(hour from timemessage) = "+currHour+" "
-									+ "WHERE DATE(timemessage)>='"+startDate+"' AND DATE(timemessage)<='"+endDate+"'";
+							queryString = "INSERT INTO "+tableName+"_"+typePathOfDay+" SELECT * FROM "+tableName+" "
+									+ "WHERE extract(hour from timemessage) = "+currHour+" AND"
+									+ " DATE(timemessage)>='"+startDate+"' AND DATE(timemessage)<='"+endDate+"'";
 							System.out.println(queryString);
 							stmt.executeUpdate(queryString);
 						}
@@ -218,9 +218,9 @@ public class TableWorker {
 					
 						for (String currHour: hourList){
 						
-							queryString = "INSERT INTO "+tableName+typePathOfDay+" SELECT * FROM "+tableName+" "
-									+ "AND extract(hour from tmstart) = "+currHour+" "
-									+ "WHERE DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
+							queryString = "INSERT INTO "+tableName+"_"+typePathOfDay+" SELECT * FROM "+tableName+" "
+									+ "WHERE extract(hour from tmstart) = "+currHour+" "
+									+ "AND DATE(tmstart)>='"+startDate+"' AND DATE(tmstart)<='"+endDate+"'";
 							System.out.println(queryString);
 							stmt.executeUpdate(queryString);
 						}
