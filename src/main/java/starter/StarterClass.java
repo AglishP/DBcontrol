@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.Scanner;
 import dataSaver.DataSaver;
 import protocol.ProtocolMain;
+import sqlQuery.BasketDisribiution;
 import sqlQuery.SqlQuery;
 import sqlQuery.TableWorker;
 
@@ -140,8 +141,9 @@ public class StarterClass {
 				endDate = db.getEndDay();
 				
 				
-				TableWorker tw = new TableWorker(myConn, startDate, endDate);
-				
+				//TableWorker tw = new TableWorker(myConn, startDate, endDate);
+				BasketDisribiution bd = new BasketDisribiution(myConn, startDate, endDate);
+				bd.makeBasketReport();
 				
 				//tw.del("fogStart");
 				//tw.load("fogStart", "day");

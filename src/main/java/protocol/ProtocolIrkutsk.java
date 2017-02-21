@@ -142,10 +142,10 @@ public class ProtocolIrkutsk {
 		rm.writeStatisticFile("FOGSTART", allDay);
 		System.out.println("complete report foganalyze all");
 		
-		//п16 рапределение данных по корзинам и экспорт в файл
+		//п. рапределение данных по корзинам и экспорт в файл
 		
 		
-		//п17 расчет среднего времени появления предупреждения о тумане
+		//п. расчет среднего времени появления предупреждения о тумане
 		
 		
 		System.out.println(db.getCurrTime());
