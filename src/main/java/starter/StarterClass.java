@@ -3,6 +3,7 @@ package starter;
 import java.sql.*;
 import java.util.Scanner;
 import dataSaver.DataSaver;
+import dataSaver.ReportMaker;
 import protocol.ProtocolMain;
 import sqlQuery.BasketDisribiution;
 import sqlQuery.SqlQuery;
@@ -13,7 +14,6 @@ public class StarterClass {
 
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		ConnectionClass conn = new ConnectionClass();
 		Connection myConn = conn.letsConnect();
@@ -36,6 +36,7 @@ public class StarterClass {
 			String startDate = null;
 			String endDate = null;
 			DateBuilder db;
+			TableWorker tw = new TableWorker(myConn);
 			
 			switch(inputCommand[0]){
 			case "load":
@@ -44,23 +45,90 @@ public class StarterClass {
 				case "this":								
 					db = new DateBuilder("this");
 					startDate = db.getStartDay();
-					System.out.println(startDate);
 					endDate = db.getEndDay();
-					System.out.println(endDate);
 					break;
 				case "prev":
 					db = new DateBuilder("prev");
 					startDate = db.getStartDay();
-					System.out.println(startDate);
 					endDate = db.getEndDay();
-					System.out.println(endDate);
+					tw.setStartEndDate(startDate, endDate);
+					
+					if (inputCommand[2].contentEquals(TableWorker.MAIN)){						
+						tw.load(TableWorker.MAIN, inputCommand[3]);
+					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
+						tw.load(TableWorker.STATUS, inputCommand[3]);
+					}
+					
 					break;
 				default:
 					System.out.println("No such command: " + inputCommand[1]);	
 					break;
 				}
-				
+							
 				break;
+				
+			case "del":
+				
+				switch(inputCommand[1]){
+				case "this":								
+					db = new DateBuilder("this");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					break;
+				case "prev":
+					db = new DateBuilder("prev");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					tw.setStartEndDate(startDate, endDate);
+					
+					if (inputCommand[2].contentEquals(TableWorker.MAIN)){
+						
+						tw.del(TableWorker.MAIN);
+					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
+						tw.del(TableWorker.STATUS);
+					}
+					
+					break;
+				default:
+					System.out.println("No such command: " + inputCommand[1]);	
+					break;
+				}
+							
+				break;
+				
+				
+			case "sep":
+				
+				switch(inputCommand[1]){
+				case "this":								
+					db = new DateBuilder("this");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					tw.setStartEndDate(startDate, endDate);
+					if (inputCommand[2].contentEquals(TableWorker.MAIN)){	
+						tw.sep(TableWorker.MAIN);
+					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
+						tw.sep(TableWorker.STATUS);
+					}
+					break;
+				case "prev":
+					db = new DateBuilder("prev");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					tw.setStartEndDate(startDate, endDate);
+					if (inputCommand[2].contentEquals(TableWorker.MAIN)){	
+						tw.sep(TableWorker.MAIN);
+					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
+						tw.sep(TableWorker.STATUS);
+					}
+					break;
+				default:
+					System.out.println("No such command: " + inputCommand[1]);	
+					break;
+				}
+							
+				break;
+				
 				
 			case "print":
 				
@@ -77,16 +145,12 @@ public class StarterClass {
 				case "this":								
 					db = new DateBuilder("this");
 					startDate = db.getStartDay();
-					//System.out.println(startDate);
 					endDate = db.getEndDay();
-					//System.out.println(endDate);
 					break;
 				case "prev":
 					db = new DateBuilder("prev");
-					startDate = db.getStartDay();
-					//System.out.println(startDate);
+					startDate = db.getStartDay();;
 					endDate = db.getEndDay();
-					//System.out.println(endDate);
 					break;
 				default:
 					System.out.println("No such command: " + inputCommand[1]);	
@@ -133,6 +197,7 @@ public class StarterClass {
 					System.out.println("No such command: " + inputCommand[2]);
 					break;
 				}
+				break;
 				
 			case "test":
 				
@@ -140,13 +205,14 @@ public class StarterClass {
 				startDate = db.getStartDay();
 				endDate = db.getEndDay();
 				
-				
+				//SqlQuery sqlQ = new SqlQuery(myConn, startDate, endDate);
+				//sqlQ.makeCalc("fogStart");
+				//ReportMaker rm = new ReportMaker(myConn,"ALL", startDate, endDate);
+				//rm.writeStatisticFile("FOGSTART", "ALL");
 				//TableWorker tw = new TableWorker(myConn, startDate, endDate);
 				BasketDisribiution bd = new BasketDisribiution(myConn, startDate, endDate);
 				bd.makeBasketReport();
-				
-				//tw.del("fogStart");
-				//tw.load("fogStart", "day");
+
 				break;
 				
 				

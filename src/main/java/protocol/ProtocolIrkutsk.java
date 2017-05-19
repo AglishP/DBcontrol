@@ -3,6 +3,7 @@ package protocol;
 import java.sql.Connection;
 
 import dataSaver.ReportMaker;
+import sqlQuery.BasketDisribiution;
 import sqlQuery.SqlQuery;
 import sqlQuery.TableWorker;
 import starter.DateBuilder;
@@ -74,6 +75,10 @@ public class ProtocolIrkutsk {
 		sqlQuery.makeCalc(extendType);
 		System.out.println("complete extendCalc Day");
 		
+		//п. вставляем в основную таблицу данные за ночь, чтобы получить данные за целый день
+		tw.load(mainType, night);
+		System.out.println("complete load day main");
+		
 		//п разбиваем данные из таблицы статусов
 		tw.sep(statusType);
 		System.out.println("complete separate status");
@@ -143,7 +148,9 @@ public class ProtocolIrkutsk {
 		System.out.println("complete report foganalyze all");
 		
 		//п. рапределение данных по корзинам и экспорт в файл
-		
+		BasketDisribiution bd = new BasketDisribiution(myConn, startDate, endDate);
+		bd.makeBasketReport();
+		System.out.println("complete basket");
 		
 		//п. расчет среднего времени появления предупреждения о тумане
 		

@@ -15,7 +15,7 @@ public class ReportMaker {
 	String pathOfDay;
 	String startDate;
 	String endDate;
-	FetchData fd = null;
+	FetchData fetchData = null;
 	DataSaver ds = null;
 	
 	/**
@@ -33,14 +33,14 @@ public class ReportMaker {
 		pathOfDay = inType;
 		startDate = inStartDate;
 		endDate = inEndDate;
-		fd = new FetchData(myConn, startDate, endDate);
+		fetchData = new FetchData(myConn);
 	}
 	
 	/**
 	 * Конструктор по умолчанию
 	 */
 	public ReportMaker(){
-		fd = new FetchData(myConn);
+		fetchData = new FetchData(myConn);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class ReportMaker {
 		this.composeAndWrite(m, headTemplate);
 		
 		//получаем данные по корзине a
-		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketAData();
+		ArrayList<LinkedHashMap<String, Object>> basketData = fetchData.getBasketA(startDate, endDate);
 		
 		//коллекция для записи в файл
 		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
@@ -155,7 +155,7 @@ public class ReportMaker {
 		this.composeAndWrite(m, headTemplate);
 		
 		//получаем данные по корзине a
-		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketBData();
+		ArrayList<LinkedHashMap<String, Object>> basketData = fetchData.getBasketB();
 		
 		//коллекция для записи в файл
 		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
@@ -190,7 +190,7 @@ public class ReportMaker {
 		this.composeAndWrite(m, headTemplate);
 		
 		//получаем данные по корзине a
-		ArrayList<LinkedHashMap<String, Object>> basketData = this.getBasketCData();
+		ArrayList<LinkedHashMap<String, Object>> basketData = fetchData.getBasketC();
 		
 		//коллекция для записи в файл
 		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
@@ -225,7 +225,7 @@ public class ReportMaker {
 		this.composeAndWrite(m, headTemplate);
 		
 		//получаем данные по корзине a
-		ArrayList<LinkedHashMap<String, Object>> basketData = this.getFactFogData();
+		ArrayList<LinkedHashMap<String, Object>> basketData = fetchData.getFactFogTime(startDate, endDate);
 		
 		//коллекция для записи в файл
 		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
@@ -261,7 +261,7 @@ public class ReportMaker {
 	private void writeFogStartData() {
 		
 		//получаем данные из таблицы
-		ArrayList<LinkedHashMap<String, Object>> fogData = this.getFogStartData();
+		ArrayList<LinkedHashMap<String, Object>> fogData = fetchData.getStartFogStat(startDate, endDate);
 		
 		//коллекция для записи в файл
 		ArrayList<ArrayList<String>> arrToWrite = new ArrayList<ArrayList<String>>(); 
@@ -280,25 +280,6 @@ public class ReportMaker {
 		}
 		
 		this.linearWrite(arrToWrite);	
-	}
-
-	/**
-	 * Получаем данные отчета по времени начала тумана
-	 * @return List c данными
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getFogStartData() {
-		
-		 return fd.getStartFogStat();
-	}
-
-	/**
-	 * Получение общих данных отчета
-	 * @return list map c данными
-	 */
-	public Map<String, Object> getTsh(){
-				
-		//получаем данные о пороговых значениях
-		return fd.getTsh();		
 	}
 	
 	/**
@@ -327,76 +308,6 @@ public class ReportMaker {
 		return m;
 	}
 	
-	/**
-	 * Получаем данные основной статистики
-	 */
-	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getMainData(){
-		
-		return fd.getMainStat();
-	}
-	
-	/**
-	 * Получаем данные основной статистики
-	 */
-	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getExtendData(){
-		
-		return fd.getExtendStat();
-	}
-	
-	/**
-	 * Получить данные о статусе
-	 * @return упакованые данные
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getStatusData(){
-		
-		return fd.getStatusStat();
-	}
-	
-	/**
-	 * Получить данные по корзине а
-	 * @return
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getBasketAData(){
-		
-		return fd.getBasketA();
-	}
-	
-	/**
-	 * Получить данные по корзине b
-	 * @return
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getBasketBData(){
-		
-		return fd.getBasketB();
-	}
-	
-	/**
-	 * Получить данные по корзине c
-	 * @return
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getBasketCData(){
-		
-		return fd.getBasketC();
-	}
-	
-	/**
-	 * Получить данные по количеству значений видимости менее 1000м
-	 * @return
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getFactFogData(){
-		
-		return fd.getFactFogTime();
-	}
-	
-	/**
-	 * Получить данные о статистике времени начала тумана
-	 * @return упакованые данные
-	 */
-	public ArrayList<LinkedHashMap<String, Object>> getStartFogData(){
-		
-		return fd.getStartFogStat();
-	}
-
 	/**
 	 * Создаем имя для файла
 	 * @param inPathOfDay String время суток, как метка в имени файла
@@ -485,7 +396,7 @@ public class ReportMaker {
 	private void writeTshData(){
 		
 		//получаем общие данные
-		Map<String, Object> headData = this.getTsh();
+		Map<String, Object> headData = fetchData.getTsh();
 		
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getTshTemplate();
@@ -499,7 +410,7 @@ public class ReportMaker {
 	private void writeMainData(){
 		
 		//получаем общие данные
-		ArrayList<ArrayList<LinkedHashMap<String, Object>>> maindData = this.getMainData();
+		ArrayList<ArrayList<LinkedHashMap<String, Object>>> maindData = fetchData.getMainStat(startDate, endDate);;
 		
 		//формируем строки общих данных
 		ArrayList<String> mainTemplate = new TemplateData().getMainTemplate();
@@ -529,7 +440,7 @@ public class ReportMaker {
 	 */
 	private void writeExtendData(){
 		//получаем общие данные
-		ArrayList<ArrayList<LinkedHashMap<String, Object>>> extendindData = this.getExtendData();
+		ArrayList<ArrayList<LinkedHashMap<String, Object>>> extendindData = fetchData.getExtendStat(startDate, endDate);
 		
 		//формируем строки общих данных
 		ArrayList<String> extendTemplate = new TemplateData().getExtendTemplate();
@@ -561,7 +472,7 @@ public class ReportMaker {
 	private void writeStatusData(){
 		
 		//получаем общие данные
-		ArrayList<LinkedHashMap<String, Object>> headData = this.getStatusData();
+		ArrayList<LinkedHashMap<String, Object>> headData = fetchData.getStatusStat(startDate, endDate);;
 		
 		//формируем строки общих данных
 		ArrayList<String> headTemplate = new TemplateData().getStatusHeadTemplate();

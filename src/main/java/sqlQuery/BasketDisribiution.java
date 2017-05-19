@@ -248,7 +248,7 @@ public class BasketDisribiution {
 	/**
 	 * Выполнение запроса и сворачивание результата в список
 	 * @param q - строка с запросом
-	 * @return - ArrayList<Map<String, Object>> - данные упакованы
+	 * @return - ArrayList<String> - данные упакованы
 	 */
 	private ArrayList<String> makeSimpleQ(String q){
 		System.out.println(q);

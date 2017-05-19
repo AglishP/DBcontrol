@@ -33,6 +33,9 @@ public class BasketView {
 		myConn = inConn;
 		startDate = inStartDate;
 		endDate = inEndDate;
+		
+		this.delView(ADDITION);
+		this.delView(MAIN);
 	}
 	
 	/**
@@ -82,9 +85,6 @@ public class BasketView {
 		
 		String query;
 		boolean isError;
-		
-//		this.delView(ADDITION);
-//		this.delView(MAIN);
 		
 		switch(inType){
 		case MAIN:
