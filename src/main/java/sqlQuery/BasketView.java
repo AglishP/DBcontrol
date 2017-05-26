@@ -1,8 +1,11 @@
 package sqlQuery;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * —оздание и удаление view дл€ раскидывани€ данных по корзинам
@@ -33,6 +36,7 @@ public class BasketView {
 		myConn = inConn;
 		startDate = inStartDate;
 		endDate = inEndDate;
+		
 	}
 	
 	/**
@@ -83,11 +87,17 @@ public class BasketView {
 		String query;
 		boolean isError;
 		
-//		this.delView(ADDITION);
-//		this.delView(MAIN);
-		
 		switch(inType){
 		case MAIN:
+			
+			if (this.checkView(MAIN)){	
+				if (this.checkView(ADDITION)){
+					this.delView(ADDITION);
+					isAdditionCons = false;
+				}
+				this.delView(MAIN);
+				isMainCons = false;
+			}
 			
 			if (!isMainCons){
 				query = this.getQuery(MAIN);
@@ -99,6 +109,10 @@ public class BasketView {
 			}
 			break;
 		case ADDITION:
+			
+			if (this.checkView(ADDITION)){
+				this.delView(ADDITION);
+			}
 			
 			if(!isAdditionCons){
 				query = this.getQuery(ADDITION);
@@ -141,6 +155,39 @@ public class BasketView {
 		}
 	}
 	
+	private boolean checkView(int inType){
+		String query= "";
+		ArrayList<String> res;
+		boolean checked = false;
+		
+		switch(inType){
+		case MAIN:
+			
+			query = "SELECT relname FROM pg_class WHERE relname='status'";
+			res = this.makeSimpleQ(query);
+			
+			if ( !res.isEmpty() && res.get(0).equals("status")){
+				checked = true;
+			}else{
+				checked =  false;
+			}
+			break;
+		case ADDITION:
+			
+			query = "SELECT relname FROM pg_class WHERE relname = 'status_a'";
+			res = this.makeSimpleQ(query);
+
+			if ( !res.isEmpty() && res.get(0).equals("status_a")){
+				checked = true;
+			}else{
+				checked = false;
+			}
+			break;
+		}
+		
+		return checked;
+	}
+	
 	/**
 	 * ¬ыполнени€ запроса, где ожидаетс€ результат типа void
 	 * @param q строка с запросом
@@ -175,6 +222,61 @@ public class BasketView {
 			}}
 		}
 		return isError;
+	}
+ 	
+ 	/**
+	 * ¬ыполнение запроса и сворачивание результата в список
+	 * @param q - строка с запросом
+	 * @return - ArrayList<String> - данные упакованы
+	 */
+	private ArrayList<String> makeSimpleQ(String q){
+		Statement stmt = null;
+
+		ArrayList<String> stringData = new ArrayList<String>();
+		
+		try {
+			stmt = myConn.createStatement();
+			
+			ResultSet rs = stmt.executeQuery(q);
+				
+			ResultSetMetaData rsmd;
+			rsmd = rs.getMetaData();
+			rsmd.getColumnCount();
+						
+			int totalColumn = rsmd.getColumnCount();			
+			
+			while (rs.next()){
+				int colId = 1;
+				
+				StringBuilder sb = new StringBuilder();
+				
+				while ( colId <= totalColumn ){
+
+					Object colVal = rs.getObject(colId);
+					
+					sb.append( colVal.toString() );
+					
+					colId++;
+				}
+				stringData.add(sb.toString());
+			}
+			
+			rs.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("we have sql exception");
+		}finally{
+			if (stmt != null){try {
+				
+				stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println("we have sql exception");
+			}}
+		}
+		
+		return stringData;
 	}
 	
 }

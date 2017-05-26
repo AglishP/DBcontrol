@@ -26,20 +26,6 @@ public class FetchData {
 	public FetchData(Connection inConn){
 		myConn = inConn;
 	}
-
-	/**
-	 *  онструктор
-	 * @param inConn установленное подключение к Ѕƒ
-	 * @param inStartDate дата начала расчета
-	 * @param inEndDate дата окончани€ расчета
-	 */
-	public FetchData(Connection inConn,
-						String inStartDate,
-						String inEndDate){
-		myConn = inConn;
-		startDate = inStartDate;
-		endDate = inEndDate;
-	}
 	
 	/**
 	 * ѕолучить данные о пороговых значени€х расчетов
@@ -90,20 +76,22 @@ public class FetchData {
 		}
 		
 		return responseData;
-		
 	}
 	
 	/**
 	 * ѕолучить данные основного расчета
+	 * @param inStartDate - String 
+	 * @param inEndDate - String 
+	 * @return упакованые данные
 	 */
-	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getMainStat(){
+	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getMainStat(String inStartDate, String inEndDate){
 		
 		ArrayList<ArrayList<LinkedHashMap<String, Object>>> responseData = new ArrayList<ArrayList<LinkedHashMap<String, Object>>>();
 		
 		for(String station: stationList){
 		
 			String queryString = "SELECT * FROM lt_estim_res "
-						+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' AND station= '"+station+"'"
+						+ "WHERE indate = '"+inStartDate+"' AND outdate = '"+inEndDate+"' AND station= '"+station+"'"
 								+ "AND period = 24 ";
 			
 			responseData.add(this.makeSimpleQ(queryString));	
@@ -114,16 +102,18 @@ public class FetchData {
 
 	/**
 	 * ѕолучить данные расширенной статистики
+	 * @param inStartDate - String 
+	 * @param inEndDate - String
 	 * @return упакованые данные 
 	 */
-	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getExtendStat(){
+	public ArrayList<ArrayList<LinkedHashMap<String, Object>>> getExtendStat(String inStartDate, String inEndDate){
 		
 		ArrayList<ArrayList<LinkedHashMap<String, Object>>> responseData = new ArrayList<ArrayList<LinkedHashMap<String, Object>>>();
 		
 		for(String station: stationList){
 		
 			String queryString = "SELECT * FROM lt_estim_res_stat "
-				+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"'AND station= '"+station+"'"
+				+ "WHERE indate = '"+inStartDate+"' AND outdate = '"+inEndDate+"'AND station= '"+station+"'"
 						+ " AND period = 24 ";
 			
 			responseData.add(this.makeSimpleQ(queryString));
@@ -133,12 +123,15 @@ public class FetchData {
 	}
 		
 	/**
-	 * 	ѕолучить данные статистики по статусу
+	 * ѕолучить данные статистики по статусу
+	 * @param inStartDate - String 
+	 * @param inEndDate - String
+	 * @return упакованые данные
 	 */
-	public ArrayList<LinkedHashMap<String, Object>> getStatusStat(){
+	public ArrayList<LinkedHashMap<String, Object>> getStatusStat(String inStartDate, String inEndDate){
 		
 		String queryString = "SELECT * FROM lt_estim_res_stat_status "
-			+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' "
+			+ "WHERE indate = '"+inStartDate+"' AND outdate = '"+inEndDate+"' "
 					+ " AND period = 36 ";
 		
 		return this.makeSimpleQ(queryString);		
@@ -146,22 +139,25 @@ public class FetchData {
 	
 	/**
 	 * ѕолучить данные статистики по расчету времени начала тумана
+	 * @param inStartDate - String 
+	 * @param inEndDate - String
 	 * @return упакованные данные
 	 */
-	public ArrayList<LinkedHashMap<String, Object>> getStartFogStat(){
+	public ArrayList<LinkedHashMap<String, Object>> getStartFogStat(String inStartDate, String inEndDate){
 		
-				
 		String queryString = "SELECT * FROM lt_fog_start_stat "
-				+ "WHERE indate = '"+startDate+"' AND outdate = '"+endDate+"' ";
+				+ "WHERE indate = '"+inStartDate+"' AND outdate = '"+inEndDate+"' ";
 		
 		return this.makeSimpleQ(queryString);
 	}
 	
 	/**
 	 * ѕолучить список сроков, которые попали в корзину а
+	 * @param inStartDate - String 
+	 * @param inEndDate - String
 	 * @return
 	 */
-	public ArrayList<LinkedHashMap<String, Object>> getBasketA(){
+	public ArrayList<LinkedHashMap<String, Object>> getBasketA(String inStartDate, String inEndDate){
 		
 		//запрос на создание VIEW
 		String queryString = "CREATE VIEW status AS "
@@ -174,8 +170,8 @@ public class FetchData {
 			+ "AND lt_estim_30791.param = 'Vis' "
 			+ "AND lt_estim_30791.tmstart >= lt_estim_status.timemessage " 
 			+ "AND (lt_estim_30791.tmstart - lt_estim_status.timemessage <= '06:00:00') " 
-			+ "AND DATE(lt_estim_status.timemessage) >= '"+startDate+"' "  
-			+ "AND DATE(lt_estim_status.timemessage) <= '"+endDate+"' " 
+			+ "AND DATE(lt_estim_status.timemessage) >= '"+inStartDate+"' "  
+			+ "AND DATE(lt_estim_status.timemessage) <= '"+inEndDate+"' " 
 			+ "ORDER BY lt_estim_status.timemessage,lt_estim_30791.tmstart";
 	
 		this.updateQ(queryString);
@@ -236,9 +232,11 @@ public class FetchData {
 
 	/**
 	 * ѕолучить список с сроками, когда видимость меньше 1000м
+	 * @param inStartDate - String 
+	 * @param inEndDate - String
 	 * @return
 	 */
-	public ArrayList<LinkedHashMap<String, Object>> getFactFogTime(){
+	public ArrayList<LinkedHashMap<String, Object>> getFactFogTime(String inStartDate, String inEndDate){
 	
 		String queryString = "DROP VIEW status_a";
 		
@@ -249,7 +247,7 @@ public class FetchData {
 		this.updateQ(queryString);
 		
 		queryString = " SELECT tmstart,factvalue FROM lt_estim_30791 WHERE param = 'Vis' AND factvalue <= 1000 AND " 
-				+ "date(tmstart) >= '"+startDate+"' and date(tmstart) <= '"+endDate+"' ORDER by tmstart";
+				+ "date(tmstart) >= '"+inStartDate+"' and date(tmstart) <= '"+inEndDate+"' ORDER by tmstart";
 		
 		return this.makeSimpleQ(queryString);
 		

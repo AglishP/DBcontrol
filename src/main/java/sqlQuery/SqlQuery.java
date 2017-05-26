@@ -103,11 +103,11 @@ public class SqlQuery {
 		
 		try {
 			stmt = myconn.createStatement();
-			for (String meteoParam: typeName){
-				queryString = "SELECT "+fn.getName(meteoParam)+"('status','30791', 36,1000,"+startDate+","+endDate+", )";
+			
+				queryString = "SELECT "+fn.getName("fogStart")+"('status','30791', 36,1000,'"+startDate+"','"+endDate+"')";
 				System.out.println(queryString);
 				stmt.executeQuery(queryString);
-			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("we have sql exception");

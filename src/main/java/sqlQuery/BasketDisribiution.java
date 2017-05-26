@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import dataSaver.DataSaver;
 
@@ -248,7 +247,7 @@ public class BasketDisribiution {
 	/**
 	 * Выполнение запроса и сворачивание результата в список
 	 * @param q - строка с запросом
-	 * @return - ArrayList<Map<String, Object>> - данные упакованы
+	 * @return - ArrayList<String> - данные упакованы
 	 */
 	private ArrayList<String> makeSimpleQ(String q){
 		System.out.println(q);

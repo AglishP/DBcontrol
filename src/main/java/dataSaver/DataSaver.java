@@ -4,7 +4,7 @@ import java.io.*;
 
 /**
  * Класс записи данных в файл
- * @author MASTER
+ * @author Павел А.
  *
  */
 public class DataSaver {
@@ -17,8 +17,7 @@ public class DataSaver {
 	/**
 	 * Пустой конструктор по умолчанию
 	 */
-	public DataSaver(){
-		
+	public DataSaver(){	
 	}
 	
 	/**

@@ -5,6 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Класс выкидывает имена функции, которая находится в БД, в зависимости от типа задачи/обработки
+ * @author Павел А.
+ *
+ */
 public class FunctionName {
 	
 	String typeFunc;
