@@ -58,7 +58,6 @@ public class StarterClass {
 					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
 						tw.load(TableWorker.STATUS, inputCommand[3]);
 					}
-					
 					break;
 				default:
 					System.out.println("No such command: " + inputCommand[1]);	
@@ -87,6 +86,34 @@ public class StarterClass {
 					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
 						tw.del(TableWorker.STATUS);
 					}
+					break;
+				default:
+					System.out.println("No such command: " + inputCommand[1]);	
+					break;
+				}
+							
+				break;
+
+			case "del":
+				
+				switch(inputCommand[1]){
+				case "this":								
+					db = new DateBuilder("this");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					break;
+				case "prev":
+					db = new DateBuilder("prev");
+					startDate = db.getStartDay();
+					endDate = db.getEndDay();
+					tw.setStartEndDate(startDate, endDate);
+					
+					if (inputCommand[2].contentEquals(TableWorker.MAIN)){
+						
+						tw.del(TableWorker.MAIN);
+					}else if (inputCommand[2].contentEquals(TableWorker.STATUS)){
+						tw.del(TableWorker.STATUS);
+					}
 					
 					break;
 				default:
@@ -95,8 +122,7 @@ public class StarterClass {
 				}
 							
 				break;
-				
-				
+
 			case "sep":
 				
 				switch(inputCommand[1]){
